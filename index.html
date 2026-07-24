@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repositório - Auxiliar Administrativo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen p-6 md:p-10">
+    
+    <div class="max-w-6xl mx-auto">
+        
+        <header class="mb-12 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-3 tracking-tight">Auxiliar Administrativo</h1>
+            <p class="text-slate-500 font-medium">Repositório de Aulas, Apresentações e Dinâmicas</p>
+        </header>
+
+        <!-- Grid de Aulas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="aulas-grid">
+            <!-- Os cards serão injetados aqui via JavaScript -->
+        </div>
+
+    </div>
+
+    <script>
+        const grid = document.getElementById('aulas-grid');
+        const totalAulas = 20;
+
+        for (let i = 1; i <= totalAulas; i++) {
+            const numeroAula = i < 10 ? '0' + i : i;
+            let conteudo = '<p class="text-sm text-slate-400 italic py-2">Conteúdo a ser definido.</p>';
+
+            // Configuração específica para a Aula 01
+            if (i === 1) {
+                conteudo = `
+                    <div class="flex flex-col gap-3">
+                        <p class="text-sm text-slate-600 font-medium mb-1">Materiais da Aula:</p>
+                        
+                        <!-- Link para Apresentação -->
+                        <a href="./Apresentacao/Apresentacao.html" target="_blank" class="group flex items-center justify-between p-3 rounded-lg bg-blue-50 border border-blue-100 text-blue-700 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all duration-200">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                <span class="text-sm font-semibold">Apresentação Inicial</span>
+                            </div>
+                            <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+
+                        <!-- Espaço para futuros arquivos da AULA-01 -->
+                        <a href="#" class="group flex items-center justify-between p-3 rounded-lg bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-200 transition-all duration-200">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                <span class="text-sm font-semibold">Formulário de Avaliação (Em breve)</span>
+                            </div>
+                        </a>
+                    </div>
+                `;
+            }
+
+            const card = `
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                    <button onclick="toggleAcordeao(${i})" class="w-full px-6 py-4 flex justify-between items-center bg-white hover:bg-slate-50 transition-colors focus:outline-none">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-sm">
+                                ${i}
+                            </div>
+                            <h2 class="text-lg font-semibold text-slate-800">AULA-${numeroAula}</h2>
+                        </div>
+                        <svg id="icone-${i}" class="w-5 h-5 text-slate-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    
+                    <div id="conteudo-${i}" class="hidden px-6 pb-6 pt-2 border-t border-slate-100 bg-white">
+                        ${conteudo}
+                    </div>
+                </div>
+            `;
+            grid.insertAdjacentHTML('beforeend', card);
+        }
+
+        function toggleAcordeao(id) {
+            const conteudo = document.getElementById('conteudo-' + id);
+            const icone = document.getElementById('icone-' + id);
+            
+            if (conteudo.classList.contains('hidden')) {
+                conteudo.classList.remove('hidden');
+                icone.classList.add('rotate-180');
+            } else {
+                conteudo.classList.add('hidden');
+                icone.classList.remove('rotate-180');
+            }
+        }
+    </script>
+</body>
+</html>
