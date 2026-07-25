@@ -18,6 +18,12 @@
         <header class="mb-12 text-center">
             <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-3 tracking-tight">Auxiliar Administrativo</h1>
             <p class="text-slate-500 font-medium">Repositório de Aulas, Apresentações e Dinâmicas</p>
+            
+            <!-- Botão do Sorteador -->
+            <button onclick="abrirSorteador()" class="mt-6 px-6 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition-colors shadow-md flex items-center justify-center gap-2 mx-auto">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                Sorteador de Grupos
+            </button>
         </header>
 
         <!-- Grid de Aulas -->
@@ -27,7 +33,66 @@
 
     </div>
 
+    <!-- Modal do Sorteador -->
+    <div id="modal-sorteador" class="hidden fixed inset-0 bg-slate-900 bg-opacity-60 z-50 flex justify-center items-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    Sorteador e Presença
+                </h2>
+                <button onclick="fecharSorteador()" class="text-slate-400 hover:text-red-500 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <div class="p-5 overflow-y-auto flex-1 flex flex-col md:flex-row gap-6">
+                <!-- Lista de Alunos -->
+                <div class="flex-1 border-r border-slate-100 pr-0 md:pr-6 flex flex-col">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-semibold text-slate-700">Lista de Alunos</h3>
+                        <div class="text-xs space-x-2">
+                            <button onclick="marcarTodos(true)" class="text-indigo-600 font-semibold hover:underline">Marcar Todos</button>
+                            <span class="text-slate-300">|</span>
+                            <button onclick="marcarTodos(false)" class="text-slate-500 hover:underline">Limpar</button>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-500 mb-2">Selecione apenas os presentes na aula. Salvo automaticamente.</div>
+                    <div id="lista-alunos" class="space-y-2 flex-1 max-h-60 md:max-h-96 overflow-y-auto bg-slate-50 p-3 rounded-lg border border-slate-200">
+                        <!-- Checkboxes gerados pelo JS -->
+                    </div>
+                </div>
+
+                <!-- Controles e Resultado -->
+                <div class="flex-1 flex flex-col">
+                    <div class="mb-5 bg-indigo-50 p-4 rounded-lg border border-indigo-100">
+                        <label class="block text-sm font-semibold text-indigo-900 mb-2">Quantidade de Integrantes por Grupo:</label>
+                        <div class="flex gap-2">
+                            <input type="number" id="tamanho-grupo" min="1" value="2" class="w-24 px-3 py-2 border border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 font-semibold text-center text-lg text-indigo-700">
+                            <button onclick="realizarSorteio()" class="flex-1 bg-indigo-600 text-white rounded-lg font-bold text-lg hover:bg-indigo-700 transition-colors shadow-sm">GERAR GRUPOS</button>
+                        </div>
+                    </div>
+                    <div class="flex-1 flex flex-col">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="font-semibold text-slate-700">Resultado do Sorteio:</h3>
+                            <span id="contador-resultado" class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded">0 Grupos</span>
+                        </div>
+                        <div id="resultado-sorteio" class="flex-1 bg-white rounded-lg p-4 border border-slate-200 overflow-y-auto max-h-60 md:max-h-[300px] text-sm text-slate-800 space-y-3 shadow-inner">
+                            <div class="h-full flex flex-col items-center justify-center text-slate-400">
+                                <svg class="w-12 h-12 mb-2 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                <p>Aguardando sorteio...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // ==========================================
+        // CÓDIGO EXISTENTE (GRID DE AULAS)
+        // ==========================================
         const grid = document.getElementById('aulas-grid');
         const totalAulas = 20;
 
@@ -35,7 +100,6 @@
             const numeroAula = i < 10 ? '0' + i : i;
             let conteudo = '<p class="text-sm text-slate-400 italic py-2">Conteúdo a ser definido.</p>';
 
-            // Configuração específica para a Aula 01
             // Configuração específica para a Aula 01
             if (i === 1) {
                 conteudo = `
@@ -114,6 +178,128 @@
                 conteudo.classList.add('hidden');
                 icone.classList.remove('rotate-180');
             }
+        }
+
+        // ==========================================
+        // CÓDIGO NOVO (SORTEADOR E PRESENÇA)
+        // ==========================================
+        
+        // Array com os nomes anonimizados
+        const alunos = [
+            "ISABELLA R**** M****", "ISABELY V**** D**** S****", "JEAN P**** S****", 
+            "JESSICA P**** M****", "JOSE A**** D**** S**** M****", "JOSEFA A**** M**** G****", 
+            "KAUA F**** D**** O****", "KAYKE K**** F**** P****", "KELVIN G**** O**** C****", 
+            "KEMYLLI K**** B**** D**** S****", "LANNA D**** R****", "LETÍCIA C**** G**** M****", 
+            "LORRAYNE S**** S****", "MARIA E**** H**** R****", "MARIELLE F**** G****", 
+            "MURILO I**** D**** S**** A****", "OLAVO V**** G**** A****", "PEDRO V**** D**** O**** G****", 
+            "RAFAEL V**** D**** J**** S****", "RAJAN M**** C**** F**** L****", "SANDY B**** K****", 
+            "SUELI D**** S**** O**** G****", "TALITA B****", "TIFANY V**** D**** S**** G****"
+        ];
+
+        const STORAGE_KEY = 'alunos_presentes_auxadm';
+        let presencas = {};
+
+        // Inicializa o Sorteador
+        function initSorteador() {
+            // Tenta recuperar do LocalStorage
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                presencas = JSON.parse(stored);
+            } else {
+                // Por padrão, todos começam presentes
+                alunos.forEach(aluno => presencas[aluno] = true);
+                salvarPresencas();
+            }
+            renderizarListaAlunos();
+        }
+
+        function salvarPresencas() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(presencas));
+        }
+
+        function renderizarListaAlunos() {
+            const container = document.getElementById('lista-alunos');
+            container.innerHTML = '';
+            
+            alunos.forEach((aluno, index) => {
+                const checked = presencas[aluno] ? 'checked' : '';
+                const item = `
+                    <label class="flex items-center gap-3 p-2 hover:bg-white rounded cursor-pointer transition-colors border border-transparent hover:border-slate-200">
+                        <input type="checkbox" id="chk_${index}" value="${aluno}" ${checked} 
+                               onchange="togglePresenca('${aluno}', this.checked)"
+                               class="w-4 h-4 text-indigo-600 bg-slate-100 border-slate-300 rounded focus:ring-indigo-500">
+                        <span class="text-sm font-medium ${presencas[aluno] ? 'text-slate-800' : 'text-slate-400 line-through'}">${aluno}</span>
+                    </label>
+                `;
+                container.insertAdjacentHTML('beforeend', item);
+            });
+        }
+
+        function togglePresenca(aluno, isPresent) {
+            presencas[aluno] = isPresent;
+            salvarPresencas();
+            renderizarListaAlunos(); // Atualiza estilo do texto (tachado/normal)
+        }
+
+        function marcarTodos(estado) {
+            alunos.forEach(aluno => presencas[aluno] = estado);
+            salvarPresencas();
+            renderizarListaAlunos();
+        }
+
+        function realizarSorteio() {
+            const tamanho = parseInt(document.getElementById('tamanho-grupo').value);
+            const resultadoDiv = document.getElementById('resultado-sorteio');
+            const contadorDiv = document.getElementById('contador-resultado');
+            
+            if (isNaN(tamanho) || tamanho < 1) {
+                alert("Por favor, insira um tamanho válido para os grupos (mínimo 1).");
+                return;
+            }
+
+            // Filtra apenas os presentes
+            let ativos = alunos.filter(a => presencas[a]);
+            
+            if (ativos.length === 0) {
+                resultadoDiv.innerHTML = '<p class="text-red-500 italic p-4 text-center">Nenhum aluno marcado como presente.</p>';
+                contadorDiv.innerText = "0 Grupos";
+                return;
+            }
+
+            // Embaralha o Array (Algoritmo Fisher-Yates)
+            for (let i = ativos.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [ativos[i], ativos[j]] = [ativos[j], ativos[i]];
+            }
+
+            // Divide nos Grupos
+            const grupos = [];
+            for (let i = 0; i < ativos.length; i += tamanho) {
+                grupos.push(ativos.slice(i, i + tamanho));
+            }
+
+            // Renderiza o Resultado
+            contadorDiv.innerText = `${grupos.length} Grupo(s)`;
+            resultadoDiv.innerHTML = grupos.map((grupo, index) => {
+                return `
+                    <div class="bg-slate-50 border border-slate-200 rounded-md p-3 mb-2">
+                        <h4 class="font-bold text-indigo-700 text-sm mb-2 uppercase tracking-wide">Grupo ${index + 1} <span class="text-slate-400 font-normal text-xs ml-1">(${grupo.length} integrantes)</span></h4>
+                        <ul class="pl-2 space-y-1">
+                            ${grupo.map(membro => `<li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-indigo-400"></div> ${membro}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Funções para Abrir e Fechar Modal
+        function abrirSorteador() {
+            initSorteador();
+            document.getElementById('modal-sorteador').classList.remove('hidden');
+        }
+
+        function fecharSorteador() {
+            document.getElementById('modal-sorteador').classList.add('hidden');
         }
     </script>
 </body>

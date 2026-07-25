@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repositório - Auxiliar Administrativo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen p-6 md:p-10">
+    
+    <div class="max-w-6xl mx-auto">
+        
+        <header class="mb-12 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-3 tracking-tight">Auxiliar Administrativo</h1>
+            <p class="text-slate-500 font-medium">Repositório de Aulas, Apresentações e Dinâmicas</p>
+        </header>
+
+        <!-- Grid de Aulas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="aulas-grid">
+            <!-- Os cards serão injetados aqui via JavaScript -->
+        </div>
+
+    </div>
+
+    <script>
+        const grid = document.getElementById('aulas-grid');
+        const totalAulas = 20;
+
+        for (let i = 1; i <= totalAulas; i++) {
+            const numeroAula = i < 10 ? '0' + i : i;
+            let conteudo = '<p class="text-sm text-slate-400 italic py-2">Conteúdo a ser definido.</p>';
+
+            // Configuração específica para a Aula 01
+            // Configuração específica para a Aula 01
+            if (i === 1) {
+                conteudo = `
+                    <div class="flex flex-col gap-3">
+                        <p class="text-sm text-slate-600 font-medium mb-1">Materiais da Aula:</p>
+                        
+                        <!-- 1. Link para Apresentação Inicial -->
+                        <a href="./Apresentacao/Apresentacao.html" target="_blank" class="group flex items-center justify-between p-3 rounded-lg bg-blue-50 border border-blue-100 text-blue-700 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all duration-200">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                <span class="text-sm font-semibold">Apresentação Inicial</span>
+                            </div>
+                            <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+
+                        <!-- 2. Link para Apresentação do Curso -->
+                        <a href="./Apresentacao/apresentacao_curso.html" target="_blank" class="group flex items-center justify-between p-3 rounded-lg bg-indigo-50 border border-indigo-100 text-indigo-700 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all duration-200">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                <span class="text-sm font-semibold">Apresentação do Curso</span>
+                            </div>
+                            <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+
+                        <!-- 3. Link para Dinâmica Marcas -->
+                        <a href="./AULA-01/dinamica_marcas.html" target="_blank" class="group flex items-center justify-between p-3 rounded-lg bg-emerald-50 border border-emerald-100 text-emerald-700 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all duration-200">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span class="text-sm font-semibold">Dinâmica: Marcas</span>
+                            </div>
+                            <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+
+                        <!-- 4. Link para Dinâmica Pitch -->
+                        <a href="./AULA-01/dinamica_pitch.html" target="_blank" class="group flex items-center justify-between p-3 rounded-lg bg-amber-50 border border-amber-100 text-amber-700 hover:bg-amber-600 hover:text-white hover:border-amber-600 transition-all duration-200">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
+                                <span class="text-sm font-semibold">Dinâmica: Pitch</span>
+                            </div>
+                            <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                    </div>
+                `;
+            }
+
+            const card = `
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                    <button onclick="toggleAcordeao(${i})" class="w-full px-6 py-4 flex justify-between items-center bg-white hover:bg-slate-50 transition-colors focus:outline-none">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-sm">
+                                ${i}
+                            </div>
+                            <h2 class="text-lg font-semibold text-slate-800">AULA-${numeroAula}</h2>
+                        </div>
+                        <svg id="icone-${i}" class="w-5 h-5 text-slate-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    
+                    <div id="conteudo-${i}" class="hidden px-6 pb-6 pt-2 border-t border-slate-100 bg-white">
+                        ${conteudo}
+                    </div>
+                </div>
+            `;
+            grid.insertAdjacentHTML('beforeend', card);
+        }
+
+        function toggleAcordeao(id) {
+            const conteudo = document.getElementById('conteudo-' + id);
+            const icone = document.getElementById('icone-' + id);
+            
+            if (conteudo.classList.contains('hidden')) {
+                conteudo.classList.remove('hidden');
+                icone.classList.add('rotate-180');
+            } else {
+                conteudo.classList.add('hidden');
+                icone.classList.remove('rotate-180');
+            }
+        }
+    </script>
+</body>
+</html>
