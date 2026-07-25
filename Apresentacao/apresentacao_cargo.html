@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <title>O Profissional: Auxiliar Administrativo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/theme/simple.min.css" id="theme">
+    <style>
+        .reveal .slides section {
+            text-align: left;
+        }
+        
+        .nome-fixo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-family: Arial, sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+            color: #0a66c2;
+            z-index: 1000;
+        }
+
+        h2 {
+            color: #0a66c2 !important;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            font-size: 1.2em !important;
+            margin-top: 40px !important;
+        }
+        
+        .item-lista {
+            margin-bottom: 20px;
+            border-left: 4px solid #0a66c2;
+            padding-left: 15px;
+        }
+        
+        ul.topicos-lista {
+            margin-top: 15px !important;
+        }
+        
+        ul.topicos-lista li {
+            margin-bottom: 15px;
+            font-size: 0.7em;
+            line-height: 1.4;
+            color: #444;
+        }
+
+        .destaque {
+            font-weight: bold;
+            color: #e31837;
+        }
+
+        /* Estilos do Modal de Siglas */
+        .sigla-link {
+            color: #0a66c2;
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-style: dotted;
+            font-weight: bold;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .modal-title {
+            color: #e31837;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            font-weight: bold;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .modal-text {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #999;
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+        
+        .modal-close:hover {
+            color: #e31837;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        
+        <div class="nome-fixo">Bruno Ferreira</div>
+
+        <div class="slides">
+            
+            <!-- Slide 1: Capa -->
+            <section>
+                <div style="margin-top: 40px;">
+                    <h1 style="font-size: 1.6em; color: #222; margin-top: 10px;">O Profissional:<br>Auxiliar Administrativo</h1>
+                    <p style="font-size: 0.7em; color: #666; margin-top: 15px;">Função, Mercado e Postura Profissional</p>
+                </div>
+            </section>
+
+            <!-- Slide 2: A Ocupação -->
+            <section>
+                <h2>1. A Ocupação e sua Importância</h2>
+                <ul class="topicos-lista">
+                    <li class="fragment"><strong>Classificação:</strong> CBO 4110-05 – Auxiliar de escritório, em geral.</li>
+                    <li class="fragment"><strong>O que faz:</strong> Realiza atividades de apoio administrativo, essenciais para o funcionamento e para o alcance dos objetivos da organização.</li>
+                    <li class="fragment"><strong>O centro das operações:</strong> É o profissional que interliga diferentes setores, garantindo que o fluxo de informações ocorra de forma rápida, segura e eficiente.</li>
+                </ul>
+            </section>
+
+            <!-- Slide 3: Explicação CBO -->
+            <section>
+                <h2>2. O que é CBO e para que serve?</h2>
+                <p style="font-size: 0.6em; color: #555; margin-bottom: 15px;">A <strong>Classificação Brasileira de Ocupações (CBO)</strong> é um documento do Ministério do Trabalho e Emprego (MTE) que reconhece, nomeia e codifica as ocupações no Brasil.</p>
+                <ul class="topicos-lista">
+                    <li class="fragment"><strong>Registros Trabalhistas:</strong> Obrigatório na <span class="sigla-link" onclick="openModal('CTPS', 'Carteira de Trabalho e Previdência Social. Documento oficial obrigatório para o registro da vida profissional no Brasil, garantindo acesso a direitos trabalhistas e previdenciários (FGTS, seguro-desemprego, aposentadoria).')">CTPS</span> e no <span class="sigla-link" onclick="openModal('eSocial', 'Sistema de Escrituração Digital das Obrigações Fiscais, Previdenciárias e Trabalhistas. Plataforma do governo federal que unifica a entrega de informações trabalhistas pelas empresas.')">eSocial</span> para definir legalmente a função exercida.</li>
+                    <li class="fragment"><strong>Estatísticas e Políticas:</strong> Alimenta bases de dados como <span class="sigla-link" onclick="openModal('CAGED', 'Cadastro Geral de Empregados e Desempregados. Base de dados do governo que registra admissões e demissões de funcionários sob o regime da CLT.')">CAGED</span> e <span class="sigla-link" onclick="openModal('RAIS', 'Relação Anual de Informações Sociais. Relatório anual solicitado pelo governo às empresas para fins estatísticos e controle de benefícios trabalhistas.')">RAIS</span> para mapeamento de empregabilidade.</li>
+                    <li class="fragment"><strong>Garantia de Direitos:</strong> Base para fiscalizações, concessão de benefícios previdenciários e definição de pisos salariais em acordos sindicais.</li>
+                    <li class="fragment"><strong>Intermediação de Vagas:</strong> Padroniza o cruzamento de dados em plataformas de recrutamento e no <span class="sigla-link" onclick="openModal('SINE', 'Sistema Nacional de Emprego. Programa do governo federal que atua na intermediação de mão de obra, cruzando o perfil de trabalhadores com vagas de empresas, além de encaminhar para o seguro-desemprego.')">SINE</span>.</li>
+                </ul>
+            </section>
+
+            <!-- Slide 4: Responsabilidades -->
+            <section>
+                <h2>3. Rotina e Responsabilidades</h2>
+                <ul class="topicos-lista">
+                    <li class="fragment"><strong>Gestão de Informação:</strong> Organizar, arquivar e destinar documentações físicas e digitais (<span class="sigla-link" onclick="openModal('LGPD', 'Lei Geral de Proteção de Dados (Lei nº 13.709/2018). Legislação brasileira que regula as atividades de tratamento de dados pessoais, protegendo a privacidade dos cidadãos.')">LGPD</span> e Nuvem).</li>
+                    <li class="fragment"><strong>Atendimento e Suporte:</strong> Comunicação constante com clientes internos (equipes) e externos (fornecedores, público), presencial e remotamente.</li>
+                    <li class="fragment"><strong>Operação Prática:</strong> Elaboração de planilhas, redação de textos corporativos (com IA), monitoramento de agendas e conferência de patrimônio.</li>
+                    <li class="fragment"><strong>RH e Eventos:</strong> Apoio em processos de recrutamento, seleção (triagem de currículos e agendamentos) e suporte à infraestrutura de eventos.</li>
+                </ul>
+            </section>
+
+            <!-- Slide 5: O Mercado de Trabalho -->
+            <section>
+                <h2>4. O Mercado de Trabalho</h2>
+                <ul class="topicos-lista">
+                    <li class="fragment"><strong>Demanda Constante:</strong> A área de Gestão é vital para todos os setores econômicos.</li>
+                    <li class="fragment"><strong>Áreas de Atuação:</strong> Empresas multinacionais e nacionais, instituições públicas, privadas e de ensino, ONGs e indústrias.</li>
+                    <li class="fragment"><strong>Ambientes Variados:</strong> Escritórios tradicionais, espaços de <em>coworking</em> e modelos de <em>home office</em>.</li>
+                    <li class="fragment"><strong>Tecnologia como Aliada:</strong> Uso de <span class="sigla-link" onclick="openModal('ERP', 'Enterprise Resource Planning (Planejamento dos Recursos da Empresa). Sistemas de software integrados utilizados pelas empresas para gerenciar atividades rotineiras como contabilidade, suprimentos, projetos e operações.')">ERPs</span>, Inteligência Artificial, Big Data e ferramentas de comunicação integrada.</li>
+                </ul>
+            </section>
+
+            <!-- Slide 6: Imagem e Postura Profissional -->
+            <section>
+                <h2>5. A Imagem do Profissional</h2>
+                <p style="font-size: 0.6em; color: #555; margin-bottom: 20px;">O Auxiliar Administrativo dialoga com todos os níveis hierárquicos: da operação à alta diretoria.</p>
+                <ul class="topicos-lista">
+                    <li class="fragment"><strong>Comunicação Não Verbal:</strong> Linguagem corporal adequada, contato visual e vestimenta profissional.</li>
+                    <li class="fragment"><strong>Comunicação Verbal:</strong> Eloquência, tom de voz, ritmo e dicção. Evitar vícios de linguagem.</li>
+                    <li class="fragment"><strong>Inteligência Emocional:</strong> Aplicação da escuta ativa, empatia e resolução de conflitos (comunicação não-violenta).</li>
+                    <li class="fragment"><span class="destaque">A Postura Vende:</span> A forma de falar e se portar transmite credibilidade, organização e confiança, refletindo diretamente na imagem da empresa.</li>
+                </ul>
+            </section>
+
+            <!-- Slide 7: Conexão com o Curso -->
+            <section>
+                <h2>6. Conexão com o Curso (Roadmap)</h2>
+                <ul class="topicos-lista">
+                    <li class="fragment"><strong>1º Passo (Hoje):</strong> Autoconhecimento, apresentação pessoal e comunicação inicial (Dinâmica Elevator Pitch).</li>
+                    <li class="fragment"><strong>2º Passo (Fundamentos):</strong> Compreender o que é uma empresa, seus setores e como eles se comunicam.</li>
+                    <li class="fragment"><strong>3º Passo (Rotinas):</strong> Aprender processos de RH, finanças, compras, atendimento e ferramentas tecnológicas.</li>
+                    <li class="fragment"><strong>Resultado:</strong> Formar um profissional seguro, articulado e capaz de gerar soluções no ambiente corporativo.</li>
+                </ul>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Modal de Informação para Siglas -->
+    <div id="infoModal" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <div id="modalTitle" class="modal-title">Título</div>
+            <div id="modalText" class="modal-text">Texto descritivo...</div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/reveal.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            controls: true,
+            progress: true,
+            center: false,
+            margin: 0.1
+        });
+
+        // Funções de controle do Modal
+        function openModal(title, text) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalText').innerText = text;
+            document.getElementById('infoModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('infoModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
