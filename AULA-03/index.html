@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Vagas - Oportunidades Abertas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0a66c2;
+            --primary-hover: #084e96;
+            --bg: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --badge-bg: #e0f2fe;
+            --badge-text: #0369a1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            padding-bottom: 50px;
+        }
+
+        header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            padding: 24px 20px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto 0 auto;
+            padding: 0 20px;
+        }
+
+        .filter-box {
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-box input {
+            flex: 1;
+            min-width: 250px;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .filter-box input:focus {
+            border-color: var(--primary);
+        }
+
+        .vagas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .vaga-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .vaga-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            border-color: var(--primary);
+        }
+
+        .vaga-header {
+            margin-bottom: 12px;
+        }
+
+        .vaga-code {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .vaga-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin: 4px 0 8px 0;
+        }
+
+        .badge-list {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .badge {
+            background-color: var(--badge-bg);
+            color: var(--badge-text);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .vaga-section {
+            margin-bottom: 12px;
+        }
+
+        .vaga-section h4 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .vaga-section p, .vaga-section ul {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+        }
+
+        .vaga-section ul {
+            list-style-type: disc;
+            padding-left: 18px;
+        }
+
+        .vaga-footer {
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .salary {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #059669;
+        }
+
+        .status {
+            font-size: 0.75rem;
+            color: #2563eb;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Painel Oficial de Oportunidades</h1>
+        <p>Atividade Prática de Triagem de Currículos & Recrutamento — Auxiliar Administrativo</p>
+    </header>
+
+    <div class="container">
+        
+        <div class="filter-box">
+            <input type="text" id="searchInput" onkeyup="filterVagas()" placeholder="Buscar vaga por título, requisito ou palavra-chave...">
+        </div>
+
+        <div class="vagas-grid" id="vagasGrid">
+
+            <!-- VAGA 01 -->
+            <div class="vaga-card">
+                <div>
+                    <div class="vaga-header">
+                        <span class="vaga-code">COD-VAG-01</span>
+                        <h2 class="vaga-title">Recepcionista</h2>
+                        <div class="badge-list">
+                            <span class="badge">Recepção</span>
+                            <span class="badge">Presencial</span>
+                            <span class="badge">CLT</span>
+                        </div>
+                    </div>
+                    <div class="vaga-section">
+                        <h4>Descrição da Vaga:</h4>
+                        <p>Atendimento presencial a clientes e pacientes, operação de PABX, agendamento de horários e suporte a rotinas de recepção.</p>
+                    </div>
+                    <div class="vaga-section">
+                        <h4>Requisitos Obrigatórios:</h4>
+                        <ul>
+                            <li>Ensino Médio Completo;</li>
+                            <li>Boa comunicação verbal e escrita;</li>
+                            <li>Experiência com PABX ou atendimento telefônico;</li>
+                            <li>Conhecimentos de Informática Básica (Office/E-mail).</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="vaga-footer">
+                    <span class="salary">R$ 1.850,00 + VT + VR</span>
+                    <span class="status">Triagem Aberta</span>
+                </div>
+            </div>
+
+            <!-- VAGA 02 -->
+            <div class="vaga-card">
+                <div>
+                    <div class="vaga-header">
+                        <span class="vaga-code">COD-VAG-02</span>
+                        <h2 class="vaga-title">Auxiliar Financeiro</h2>
+                        <div class="badge-list">
+                            <span class="badge">Financeiro</span>
+                            <span class="badge">Híbrido</span>
+                            <span class="badge">CLT</span>
+                        </div>
+                    </div>
+                    <div class="vaga-section">
+                        <h4>Descrição da Vaga:</h4>
+                        <p>Auxílio nas rotinas de Contas a Pagar, Contas a Receber, emissão de boletos, conciliação bancária diária e elaboração de relatórios no Excel.</p>
+                    </div>
+                    <div class="vaga-section">
+                        <h4>Requisitos Obrigatórios:</h4>
+                        <ul>
+                            <li>Superior em andamento (Adm, Contábeis, Economia);</li>
+                            <li>Excel Intermediário ou Avançado (Fórmulas, PROCV, Tabela Dinâmica);</li>
+                            <li>Vivência prévia em rotinas financeiras ou bancárias.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="vaga-footer">
+                    <span class="salary">R$ 2.400,00 + Benefícios</span>
+                    <span class="status">Triagem Aberta</span>
+                </div>
+            </div>
+
+            <!-- VAGA 03 -->
+            <div class="vaga-card">
+                <div>
+                    <div class="vaga-header">
+                        <span class="vaga-code">COD-VAG-03</span>
+                        <h2 class="vaga-title">Auxiliar de Almoxarifado</h2>
+                        <div class="badge-list">
+                            <span class="badge">Logística</span>
+                            <span class="badge">Presencial</span>
+                            <span class="badge">CLT</span>
+                        </div>
+                    </div>
+                    <div class="vaga-section">
+                        <h4>Descrição da Vaga:</h4>
+                        <p>Recebimento, conferência de Notas Fiscais, estocagem, organização de inventários rotativos e separação de materiais de expedição.</p>
+                    </div>
+                    <div class="vaga-section">
+                        <h4>Requisitos Obrigatórios:</h4>
+                        <ul>
+                            <li>Ensino Médio Completo ou Técnico em Logística;</li>
+                            <li>Experiência com conferência de mercadorias e NFs;</li>
+                            <li>Organização, atenção a detalhes e postura dinâmica.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="vaga-footer">
+                    <span class="salary">R$ 2.050,00 + Cesta Básica</span>
+                    <span class="status">Triagem Aberta</span>
+                </div>
+            </div>
+
+            <!-- VAGA 04 -->
+            <div class="vaga-card">
+                <div>
+                    <div class="vaga-header">
+                        <span class="vaga-code">COD-VAG-04</span>
+                        <h2 class="vaga-title">Assistente de Recursos Humanos</h2>
+                        <div class="badge-list">
+                            <span class="badge">Recursos Humanos</span>
+                            <span class="badge">Presencial</span>
+                            <span class="badge">CLT</span>
+                        </div>
+                    </div>
+                    <div class="vaga-section">
+                        <h4>Descrição da Vaga:</h4>
+                        <p>Suporte no recrutamento e seleção (triagem, convocação), acompanhamento do ponto eletrônico diário, benefícios e admissão de colaboradores.</p>
+                    </div>
+                    <div class="vaga-section">
+                        <h4>Requisitos Obrigatórios:</h4>
+                        <ul>
+                            <li>Cursando Gestão de RH, Psicologia ou Administração;</li>
+                            <li>Noções de apuração de ponto e folha de pagamento;</li>
+                            <li>Boa comunicação interpessoal e empatia.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="vaga-footer">
+                    <span class="salary">R$ 2.300,00 + Plano de Saúde</span>
+                    <span class="status">Triagem Aberta</span>
+                </div>
+            </div>
+
+            <!-- VAGA 05 -->
+            <div class="vaga-card">
+                <div>
+                    <div class="vaga-header">
+                        <span class="vaga-code">COD-VAG-05</span>
+                        <h2 class="vaga-title">Operador de Caixa</h2>
+                        <div class="badge-list">
+                            <span class="badge">Varejo</span>
+                            <span class="badge">Escala 6x1</span>
+                            <span class="badge">CLT</span>
+                        </div>
+                    </div>
+                    <div class="vaga-section">
+                        <h4>Descrição da Vaga:</h4>
+                        <p>Atendimento de frente de caixa, recebimento de pagamentos (dinheiro, cartões, Pix), abertura, sangria e fechamento seguro do caixa.</p>
+                    </div>
+                    <div class="vaga-section">
+                        <h4>Requisitos Obrigatórios:</h4>
+                        <ul>
+                            <li>Ensino Médio Completo;</li>
+                            <li>Experiência comprovada em operação de caixa;</li>
+                            <li>Raciocínio lógico ágil, atenção com valores e troco.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="vaga-footer">
+                    <span class="salary">R$ 1.920,00 + Quebra de Caixa</span>
+                    <span class="status">Triagem Aberta</span>
+                </div>
+            </div>
+
+            <!-- VAGA 06 -->
+            <div class="vaga-card">
+                <div>
+                    <div class="vaga-header">
+                        <span class="vaga-code">COD-VAG-06</span>
+                        <h2 class="vaga-title">Assistente de Compras</h2>
+                        <div class="badge-list">
+                            <span class="badge">Suprimentos</span>
+                            <span class="badge">Presencial</span>
+                            <span class="badge">CLT</span>
+                        </div>
+                    </div>
+                    <div class="vaga-section">
+                        <h4>Descrição da Vaga:</h4>
+                        <p>Cotação de materiais e insumos com múltiplos fornecedores, negociação de preços/prazos de entrega e emissão de Pedidos de Compra via ERP.</p>
+                    </div>
+                    <div class="vaga-section">
+                        <h4>Requisitos Obrigatórios:</h4>
+                        <ul>
+                            <li>Superior cursando ou completo em Adm ou correlatos;</li>
+                            <li>Experiência em negociação comercial e cotações;</li>
+                            <li>Domínio de planilhas e sistemas de gestão (ERP/SAP).</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="vaga-footer">
+                    <span class="salary">R$ 2.600,00 + VR + VT</span>
+                    <span class="status">Triagem Aberta</span>
+                </div>
+            </div>
+
+            <!-- VAGA 07 -->
+            <div class="vaga-card">
+                <div>
+                    <div class="vaga-header">
+                        <span class="vaga-code">COD-VAG-07</span>
+                        <h2 class="vaga-title">Atendente de SAC</h2>
+                        <div class="badge-list">
+                            <span class="badge">Atendimento</span>
+                            <span class="badge">Teletrabalho / Presencial</span>
+                            <span class="badge">CLT</span>
+                        </div>
+                    </div>
+                    <div class="vaga-section">
+                        <h4>Descrição da Vaga:</h4>
+                        <p>Atendimento telefônico e online receptivo para resolução de dúvidas, registro de reclamações em sistema CRM e suporte ao cliente.</p>
+                    </div>
+                    <div class="vaga-section">
+                        <h4>Requisitos Obrigatórios:</h4>
+                        <ul>
+                            <li>Ensino Médio Completo;</li>
+                            <li>Digitação rápida e boa gramática escrita/falada;</li>
+                            <li>Paciência, inteligência emocional e resolução de conflitos.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="vaga-footer">
+                    <span class="salary">R$ 1.800,00 + Variável</span>
+                    <span class="status">Triagem Aberta</span>
+                </div>
+            </div>
+
+            <!-- VAGA 08 -->
+            <div class="vaga-card">
+                <div>
+                    <div class="vaga-header">
+                        <span class="vaga-code">COD-VAG-08</span>
+                        <h2 class="vaga-title">Auxiliar de Arquivo</h2>
+                        <div class="badge-list">
+                            <span class="badge">Documentação</span>
+                            <span class="badge">Presencial</span>
+                            <span class="badge">CLT</span>
+                        </div>
+                    </div>
+                    <div class="vaga-section">
+                        <h4>Descrição da Vaga:</h4>
+                        <p>Organização, catalogação e digitalização de documentos físicos, controle de tabela de temporalidade e atendimento a solicitações de pastas.</p>
+                    </div>
+                    <div class="vaga-section">
+                        <h4>Requisitos Obrigatórios:</h4>
+                        <ul>
+                            <li>Ensino Médio Completo ou Técnico em Arquivo/Secretariado;</li>
+                            <li>Conhecimento de métodos de arquivamento (Alfabético/Numérico);</li>
+                            <li>Foco extremo em detalhes, organização e confidencialidade.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="vaga-footer">
+                    <span class="salary">R$ 1.950,00 + VT + VR</span>
+                    <span class="status">Triagem Aberta</span>
+                </div>
+            </div>
+
+            <!-- VAGA 09 -->
+            <div class="vaga-card">
+                <div>
+                    <div class="vaga-header">
+                        <span class="vaga-code">COD-VAG-09</span>
+                        <h2 class="vaga-title">Assistente de Vendas</h2>
+                        <div class="badge-list">
+                            <span class="badge">Comercial</span>
+                            <span class="badge">Presencial</span>
+                            <span class="badge">CLT</span>
+                        </div>
+                    </div>
+                    <div class="vaga-section">
+                        <h4>Descrição da Vaga:</h4>
+                        <p>Apoio à equipe comercial, elaboração de propostas no Word/PDF, contato com clientes para acompanhamento de orçamentos e pós-venda.</p>
+                    </div>
+                    <div class="vaga-section">
+                        <h4>Requisitos Obrigatórios:</h4>
+                        <ul>
+                            <li>Perfil comunicativo, persuasivo e orientado a metas;</li>
+                            <li>Vivência em vendas ou suporte comercial;</li>
+                            <li>Elaboração de documentos formais e e-mails comerciais.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="vaga-footer">
+                    <span class="salary">R$ 2.100,00 + Comissões</span>
+                    <span class="status">Triagem Aberta</span>
+                </div>
+            </div>
+
+            <!-- VAGA 10 -->
+            <div class="vaga-card">
+                <div>
+                    <div class="vaga-header">
+                        <span class="vaga-code">COD-VAG-10</span>
+                        <h2 class="vaga-title">Auxiliar de Escritório (Geral)</h2>
+                        <div class="badge-list">
+                            <span class="badge">Iniciante / Aprendiz</span>
+                            <span class="badge">Presencial</span>
+                            <span class="badge">CLT</span>
+                        </div>
+                    </div>
+                    <div class="vaga-section">
+                        <h4>Descrição da Vaga:</h4>
+                        <p>Apoio geral nas rotinas administrativas do escritório: atendimento telefônico simples, organização de correspondências, cópias e digitação.</p>
+                    </div>
+                    <div class="vaga-section">
+                        <h4>Requisitos Obrigatórios:</h4>
+                        <ul>
+                            <li>Ensino Médio Cursando ou Completo (Primeiro Emprego/Aspirante);</li>
+                            <li>Pacote Office Básico (Word, Excel básico);</li>
+                            <li>Forte vontade de aprender, pontualidade e boa atitude.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="vaga-footer">
+                    <span class="salary">R$ 1.600,00 + VT + VR</span>
+                    <span class="status">Triagem Aberta</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function filterVagas() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.getElementsByClassName('vaga-card');
+
+            for (let i = 0; i < cards.length; i++) {
+                const text = cards[i].innerText.toLowerCase();
+                if (text.includes(input)) {
+                    cards[i].style.display = 'flex';
+                } else {
+                    cards[i].style.display = 'none';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
