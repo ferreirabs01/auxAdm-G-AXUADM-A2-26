@@ -1,0 +1,948 @@
+
+
+        /* Drag & Drop Visuals */
+        .file-item {
+            touch-action: none;
+            transition: transform 0.15s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.15s ease;
+        }
+
+        .file-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        .file-item.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+
+        .folder-dropzone.drag-over {
+            background: rgba(56, 189, 248, 0.25) !important;
+            border-color: #38bdf8 !important;
+            transform: scale(1.04);
+        }
+
+        /* Pulse Animations for Targets */
+        @keyframes target-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.4); }
+            50% { box-shadow: 0 0 0 12px rgba(56, 189, 248, 0); }
+        }
+
+        .highlight-target {
+            animation: target-pulse 2s infinite;
+            border-color: #38bdf8 !important;
+        }
+
+        /* Notification Spawn Animation */
+        @keyframes pop-in {
+            0% { transform: scale(0.8) translateY(20px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        .animate-pop {
+            animation: pop-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.35); }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col font-sans select-none text-slate-100">
+
+    <!-- TOP SYSTEM BAR (MAC/WIN HYBRID) -->
+    <header class="h-9 bg-slate-950/80 border-b border-white/10 px-4 flex items-center justify-between text-xs backdrop-blur-md z-30 shrink-0">
+        <!-- OS LOGO & APP TITLE -->
+        <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-1.5 text-cyan-400 font-bold tracking-wide">
+                <i data-lucide="monitor" class="w-4 h-4"></i>
+                <span>DeskOS</span>
+            </div>
+            <span class="text-slate-600">|</span>
+            <span id="mission-status-indicator" class="text-slate-300 font-medium flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                <span>Treino de Produtividade Digital</span>
+            </span>
+        </div>
+
+        <!-- CENTER ACTIVE MISSION STEPPER -->
+        <div id="top-stepper" class="hidden md:flex items-center space-x-2 bg-slate-900/80 px-3 py-1 rounded-full border border-white/10 text-[11px]">
+            <span id="step-1-badge" class="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-semibold border border-cyan-500/30">1. Arrastar</span>
+            <span class="text-slate-600">›</span>
+            <span id="step-2-badge" class="px-2 py-0.5 rounded-full text-slate-500">2. Botão Direito</span>
+            <span class="text-slate-600">›</span>
+            <span id="step-3-badge" class="px-2 py-0.5 rounded-full text-slate-500">3. Clique Duplo</span>
+            <span class="text-slate-600">›</span>
+            <span id="step-4-badge" class="px-2 py-0.5 rounded-full text-slate-500">4. Agilidade</span>
+        </div>
+
+        <!-- RIGHT UTILITIES -->
+        <div class="flex items-center space-x-3">
+            <button id="audio-toggle-btn" onclick="toggleAudio()" class="p-1 rounded-md hover:bg-white/10 text-slate-300 transition" title="Mutar/Desmutar Efeitos Sonoros">
+                <i data-lucide="volume-2" id="audio-icon" class="w-4 h-4 text-cyan-400"></i>
+            </button>
+            <span id="clock-display" class="font-mono text-slate-300 font-medium">14:30</span>
+        </div>
+    </header>
+
+    <!-- MAIN DESKTOP WORKSPACE -->
+    <main id="desktop-workspace" class="flex-1 relative p-6 overflow-hidden flex flex-col justify-between">
+
+        <!-- FLOATING ASSISTANT CARD (MISSION INSTRUCTIONS) -->
+        <div id="assistant-card" class="glass-panel w-full max-w-lg rounded-2xl p-4 shadow-2xl z-20 transition-all duration-300 relative border border-cyan-500/30">
+            <div class="flex items-start justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2.5 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20">
+                        <i data-lucide="sparkles" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h2 id="assistant-title" class="text-sm font-bold text-white tracking-wide">Missão 1: Organizar Área de Trabalho</h2>
+                        <p id="assistant-subtitle" class="text-xs text-cyan-300/80 font-medium">Treino de Arrastar e Soltar (Drag & Drop)</p>
+                    </div>
+                </div>
+                <span id="assistant-counter" class="px-2.5 py-1 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800 text-xs font-mono font-bold">
+                    0 / 4 Concluídos
+                </span>
+            </div>
+
+            <p id="assistant-description" class="text-xs text-slate-300 mt-3 leading-relaxed">
+                Clique, segure e arraste os arquivos espalhados pela tela até suas respectivas pastas destino.
+            </p>
+
+            <!-- PROGRESS BAR -->
+            <div class="w-full bg-slate-950 rounded-full h-1.5 mt-3 overflow-hidden border border-white/5">
+                <div id="assistant-progress-bar" class="bg-gradient-to-r from-cyan-400 to-blue-500 h-full w-0 transition-all duration-300"></div>
+            </div>
+        </div>
+
+        <!-- FOLDERS TARGET AREA (TOP RIGHT CORNER / GRID) -->
+        <div id="folders-container" class="grid grid-cols-3 gap-4 max-w-md my-auto relative z-10">
+            <!-- Folder: Documentos -->
+            <div id="folder-docs" data-target-type="docs" class="folder-dropzone glass-card p-4 rounded-2xl border border-white/10 flex flex-col items-center justify-center text-center transition-all duration-200 hover:border-cyan-400/50">
+                <div class="p-3 bg-blue-500/20 text-blue-400 rounded-xl mb-2">
+                    <i data-lucide="folder-open" class="w-8 h-8"></i>
+                </div>
+                <span class="text-xs font-bold text-slate-100">Documentos</span>
+                <span class="text-[10px] text-slate-400 font-mono mt-0.5">.pdf / .xlsx</span>
+            </div>
+
+            <!-- Folder: Imagens -->
+            <div id="folder-imgs" data-target-type="imgs" class="folder-dropzone glass-card p-4 rounded-2xl border border-white/10 flex flex-col items-center justify-center text-center transition-all duration-200 hover:border-purple-400/50">
+                <div class="p-3 bg-purple-500/20 text-purple-400 rounded-xl mb-2">
+                    <i data-lucide="folder-git-2" class="w-8 h-8"></i>
+                </div>
+                <span class="text-xs font-bold text-slate-100">Imagens</span>
+                <span class="text-[10px] text-slate-400 font-mono mt-0.5">.jpg / .png</span>
+            </div>
+
+            <!-- Folder: Lixeira -->
+            <div id="folder-trash" data-target-type="trash" class="folder-dropzone glass-card p-4 rounded-2xl border border-white/10 flex flex-col items-center justify-center text-center transition-all duration-200 hover:border-rose-400/50">
+                <div class="p-3 bg-rose-500/20 text-rose-400 rounded-xl mb-2">
+                    <i data-lucide="trash-2" class="w-8 h-8"></i>
+                </div>
+                <span class="text-xs font-bold text-slate-100">Lixeira</span>
+                <span class="text-[10px] text-slate-400 font-mono mt-0.5">.tmp / Rascunhos</span>
+            </div>
+        </div>
+
+        <!-- DYNAMIC DESKTOP FILES CONTAINER (FOR DRAG/DROP & RIGHT-CLICK MISSIONS) -->
+        <div id="desktop-files-layer" class="absolute inset-0 pointer-events-none p-6 z-10">
+            <!-- Dynamic Files populated by JS -->
+        </div>
+
+        <!-- NOTIFICATION CONTAINER (FOR REACTION TIME MISSION) -->
+        <div id="notification-zone" class="absolute inset-0 pointer-events-none z-40 overflow-hidden">
+            <!-- Dynamic popups will spawn here -->
+        </div>
+
+        <!-- APP WINDOW MODAL (FOR DOUBLE CLICK MISSION & APP PREVIEWS) -->
+        <div id="app-window" class="glass-panel w-full max-w-2xl h-96 rounded-2xl shadow-2xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 flex flex-col overflow-hidden hidden">
+            <!-- WINDOW HEADER -->
+            <div class="bg-slate-950/70 px-4 py-2.5 border-b border-white/10 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <button onclick="closeAppWindow()" class="w-3 h-3 rounded-full bg-rose-500 hover:opacity-80"></button>
+                    <button class="w-3 h-3 rounded-full bg-amber-500 hover:opacity-80"></button>
+                    <button class="w-3 h-3 rounded-full bg-emerald-500 hover:opacity-80"></button>
+                    <span id="window-title" class="ml-3 text-xs font-bold text-slate-300 font-mono">Navegador DeskOS</span>
+                </div>
+                <div class="text-[11px] text-slate-500">https://desk-os.internal/workspace</div>
+            </div>
+            <!-- WINDOW CONTENT -->
+            <div id="window-content" class="flex-1 p-6 overflow-y-auto text-xs text-slate-300 leading-relaxed">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+
+        <!-- CUSTOM CONTEXT MENU (FOR RIGHT CLICK MISSION) -->
+        <div id="custom-context-menu" class="glass-panel w-48 rounded-xl py-1.5 shadow-2xl absolute z-50 hidden border border-white/15 text-xs text-slate-200">
+            <button onclick="handleContextOption('open')" class="w-full px-3 py-1.5 hover:bg-cyan-500/20 hover:text-cyan-300 text-left flex items-center gap-2 transition">
+                <i data-lucide="folder-open" class="w-3.5 h-3.5 text-cyan-400"></i> Abrir Arquivo
+            </button>
+            <button onclick="handleContextOption('rename')" class="w-full px-3 py-1.5 hover:bg-cyan-500/20 hover:text-cyan-300 text-left flex items-center gap-2 transition">
+                <i data-lucide="edit-3" class="w-3.5 h-3.5 text-amber-400"></i> Renomear
+            </button>
+            <div class="my-1 border-t border-white/10"></div>
+            <button onclick="handleContextOption('delete')" class="w-full px-3 py-1.5 hover:bg-rose-500/20 text-rose-300 text-left flex items-center gap-2 transition font-semibold">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-400"></i> Excluir Arquivo
+            </button>
+        </div>
+
+    </main>
+
+    <!-- BOTTOM TASKBAR / DOCK -->
+    <footer class="h-16 bg-slate-950/80 border-t border-white/10 px-6 flex items-center justify-between backdrop-blur-xl z-30 shrink-0">
+        <!-- DOCK APPS -->
+        <div class="flex items-center space-x-3 mx-auto">
+            <!-- App 1: Finder -->
+            <div class="p-2.5 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 border border-white/10 text-cyan-400 transition transform hover:-translate-y-1 cursor-pointer" title="Arquivos" onclick="playAudio('click')">
+                <i data-lucide="hard-drive" class="w-5 h-5"></i>
+            </div>
+            <!-- App 2: Browser (Double Click Target for Mission 3) -->
+            <div id="app-icon-browser" 
+                 class="p-2.5 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 border border-white/10 text-emerald-400 transition transform hover:-translate-y-1 cursor-pointer relative" 
+                 title="Navegador Web (Clique Duplo para Abrir)"
+                 ondblclick="handleBrowserDoubleClick()"
+                 onclick="handleSingleClickWarning()">
+                <i data-lucide="globe" class="w-5 h-5"></i>
+                <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full"></span>
+            </div>
+            <!-- App 3: Notes -->
+            <div class="p-2.5 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 border border-white/10 text-amber-400 transition transform hover:-translate-y-1 cursor-pointer" title="Notas" onclick="openAppNotes()">
+                <i data-lucide="file-text" class="w-5 h-5"></i>
+            </div>
+            <!-- App 4: Chat -->
+            <div class="p-2.5 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 border border-white/10 text-purple-400 transition transform hover:-translate-y-1 cursor-pointer" title="DeskChat / Slack" onclick="playAudio('click')">
+                <i data-lucide="message-square" class="w-5 h-5"></i>
+            </div>
+        </div>
+
+        <!-- RESTART / FREE MODE BUTTON -->
+        <button onclick="resetTraining()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-white/10 text-xs font-semibold flex items-center gap-1.5 transition">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reiniciar
+        </button>
+    </footer>
+
+    <!-- FINAL REPORT DASHBOARD MODAL -->
+    <div id="stats-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-6 hidden">
+        <div class="glass-panel w-full max-w-xl rounded-3xl p-6 shadow-2xl border border-cyan-500/30 flex flex-col space-y-6">
+            <!-- HEADER -->
+            <div class="text-center space-y-1">
+                <div class="inline-flex p-3 rounded-2xl bg-gradient-to-tr from-cyan-500 to-emerald-400 text-slate-950 shadow-lg shadow-cyan-500/20 mb-2">
+                    <i data-lucide="award" class="w-8 h-8"></i>
+                </div>
+                <h2 class="text-xl font-bold text-white">Relatório de Produtividade do Mouse</h2>
+                <p class="text-xs text-slate-400">Treinamento concluído com sucesso! Confira suas estatísticas de agilidade.</p>
+            </div>
+
+            <!-- METRICS GRID -->
+            <div class="grid grid-cols-2 gap-3 text-xs">
+                <!-- Metric 1: Reaction Time -->
+                <div class="glass-card p-4 rounded-2xl border border-white/10 flex flex-col">
+                    <span class="text-slate-400 font-medium text-[11px] uppercase tracking-wider">Tempo Médio de Reação</span>
+                    <span id="stat-reaction-time" class="text-2xl font-black text-cyan-400 font-mono mt-1">340 ms</span>
+                    <span class="text-[10px] text-emerald-400 mt-1">✓ Excelente velocidade de resposta</span>
+                </div>
+
+                <!-- Metric 2: Drag Accuracy -->
+                <div class="glass-card p-4 rounded-2xl border border-white/10 flex flex-col">
+                    <span class="text-slate-400 font-medium text-[11px] uppercase tracking-wider">Precisão de Arraste</span>
+                    <span id="stat-accuracy" class="text-2xl font-black text-emerald-400 font-mono mt-1">100%</span>
+                    <span class="text-[10px] text-slate-400 mt-1">Sem erros de destino</span>
+                </div>
+
+                <!-- Metric 3: Total Clicks -->
+                <div class="glass-card p-4 rounded-2xl border border-white/10 flex flex-col">
+                    <span class="text-slate-400 font-medium text-[11px] uppercase tracking-wider">Total de Interações</span>
+                    <span id="stat-total-clicks" class="text-2xl font-black text-purple-400 font-mono mt-1">28 Cliques</span>
+                    <span class="text-[10px] text-slate-400 mt-1">Esquerdo, Direito & Duplo</span>
+                </div>
+
+                <!-- Metric 4: Score Rating -->
+                <div class="glass-card p-4 rounded-2xl border border-white/10 flex flex-col">
+                    <span class="text-slate-400 font-medium text-[11px] uppercase tracking-wider">Classificação de Agilidade</span>
+                    <span id="stat-rating" class="text-lg font-bold text-amber-400 mt-1">Produtividade PRO</span>
+                    <span class="text-[10px] text-slate-400 mt-1">Pronto para o mercado de trabalho</span>
+                </div>
+            </div>
+
+            <!-- ACTION BUTTONS -->
+            <div class="flex items-center space-x-3 pt-2">
+                <button onclick="enableFreeMode()" class="flex-1 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold rounded-xl text-xs transition shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2">
+                    <i data-lucide="play" class="w-4 h-4 fill-current"></i> Explorar Modo Livre (Sandbox)
+                </button>
+                <button onclick="resetTraining()" class="px-4 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs border border-white/10 transition">
+                    Refazer Treino
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APPLICATION LOGIC -->
+    <script>
+        /* ==========================================================================
+           1. GLOBAL STATE MANAGEMENT
+           ========================================================================== */
+        
+        const state = {
+            currentMission: 1, // 1: Drag & Drop, 2: Right-Click, 3: Double-Click, 4: Notifications, 5: Complete/FreeMode
+            audioMuted: false,
+            
+            // Mission 1 State
+            m1Files: [
+                { id: 'f1', name: 'relatorio_final.pdf', type: 'docs', icon: 'file-text', color: 'text-blue-400', bg: 'bg-blue-500/10' },
+                { id: 'f2', name: 'foto_viagem.jpg', type: 'imgs', icon: 'image', color: 'text-purple-400', bg: 'bg-purple-500/10' },
+                { id: 'f3', name: 'planilha_gastos.xlsx', type: 'docs', icon: 'sheet', color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+                { id: 'f4', name: 'rascunho.txt', type: 'trash', icon: 'file-code-2', color: 'text-rose-400', bg: 'bg-rose-500/10' }
+            ],
+            m1Completed: 0,
+
+            // Mission 2 State
+            m2FileTargetId: 'm2-file-zip',
+
+            // Mission 3 State
+            m3LastClickTime: 0,
+
+            // Mission 4 State
+            m4TotalNeeded: 5,
+            m4Cleared: 0,
+            m4ReactionTimes: [],
+            m4CurrentSpawnTime: 0,
+
+            // Overall Analytics
+            stats: {
+                totalClicks: 0,
+                rightClicks: 0,
+                doubleClicks: 0,
+                dragEvents: 0,
+                misclicks: 0
+            }
+        };
+
+        /* ==========================================================================
+           2. WEB AUDIO API SYNTHESIZER (NO EXTERNAL MP3 DEPENDENCIES)
+           ========================================================================== */
+        
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playAudio(type) {
+            if (state.audioMuted) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(200, now + 0.04);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.04);
+                osc.start(now);
+                osc.stop(now + 0.04);
+            } else if (type === 'drop') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(160, now);
+                osc.frequency.exponentialRampToValueAtTime(50, now + 0.09);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.09);
+                osc.start(now);
+                osc.stop(now + 0.09);
+            } else if (type === 'context') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.setValueAtTime(600, now + 0.03);
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.07);
+                osc.start(now);
+                osc.stop(now + 0.07);
+            } else if (type === 'success') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
+                osc.frequency.setValueAtTime(1046.50, now + 0.24); // C6
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+                osc.start(now);
+                osc.stop(now + 0.35);
+            } else if (type === 'pop') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(900, now + 0.06);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.06);
+                osc.start(now);
+                osc.stop(now + 0.06);
+            } else if (type === 'error') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.linearRampToValueAtTime(110, now + 0.15);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
+                osc.start(now);
+                osc.stop(now + 0.15);
+            }
+        }
+
+        function toggleAudio() {
+            state.audioMuted = !state.audioMuted;
+            const icon = document.getElementById('audio-icon');
+            if (state.audioMuted) {
+                icon.setAttribute('data-lucide', 'volume-x');
+                icon.classList.remove('text-cyan-400');
+                icon.classList.add('text-slate-500');
+            } else {
+                icon.setAttribute('data-lucide', 'volume-2');
+                icon.classList.remove('text-slate-500');
+                icon.classList.add('text-cyan-400');
+                playAudio('click');
+            }
+            lucide.createIcons();
+        }
+
+        /* ==========================================================================
+           3. MISSION ENGINE & WORKSPACE INITIALIZATION
+           ========================================================================== */
+
+        function initWorkspace() {
+            setupGlobalEventListeners();
+            startClock();
+            loadMission(1);
+            lucide.createIcons();
+        }
+
+        function startClock() {
+            function update() {
+                const now = new Date();
+                const hrs = String(now.getHours()).padStart(2, '0');
+                const mins = String(now.getMinutes()).padStart(2, '0');
+                document.getElementById('clock-display').textContent = `${hrs}:${mins}`;
+            }
+            update();
+            setInterval(update, 10000);
+        }
+
+        function loadMission(missionNum) {
+            state.currentMission = missionNum;
+            updateStepperBadges();
+            const filesContainer = document.getElementById('desktop-files-layer');
+            filesContainer.innerHTML = '';
+            closeContext();
+            closeAppWindow();
+
+            if (missionNum === 1) {
+                // MISSION 1: DRAG AND DROP
+                updateAssistantCard(
+                    "Missão 1: Organizar Área de Trabalho",
+                    "Treino de Arrastar e Soltar (Drag & Drop)",
+                    "Clique e segure os arquivos na área de trabalho e solte-os dentro da pasta correspondente.",
+                    `${state.m1Completed} / ${state.m1Files.length} Concluídos`,
+                    (state.m1Completed / state.m1Files.length) * 100
+                );
+                document.getElementById('folders-container').classList.remove('hidden');
+                renderMission1Files();
+            } else if (missionNum === 2) {
+                // MISSION 2: RIGHT CLICK CONTEXT MENU
+                updateAssistantCard(
+                    "Missão 2: Ação Rápida no Menu de Opções",
+                    "Treino de Clique com o Botão Direito (Context Menu)",
+                    "Clique com o BOTÃO DIREITO sobre o arquivo 'arquivo_duplicado.zip' e selecione a opção 'Excluir'.",
+                    "0 / 1 Concluído",
+                    0
+                );
+                document.getElementById('folders-container').classList.add('hidden');
+                renderMission2File();
+            } else if (missionNum === 3) {
+                // MISSION 3: DOUBLE CLICK
+                updateAssistantCard(
+                    "Missão 3: Abrir Programas Rapidamente",
+                    "Treino de Clique Duplo (Double Click)",
+                    "Dê um CLIQUE DUPLO rápido no ícone do 'Navegador Web' no Dock inferior para abri-lo.",
+                    "0 / 1 Concluído",
+                    0
+                );
+                document.getElementById('folders-container').classList.add('hidden');
+                highlightDockApp('app-icon-browser');
+            } else if (missionNum === 4) {
+                // MISSION 4: REACTION TIME & NOTIFICATIONS
+                updateAssistantCard(
+                    "Missão 4: Agilidade e Foco na Rotina",
+                    "Treino de Velocidade e Precisão de Clique",
+                    "Notificações de e-mail e mensagens vão surgir na tela. Clique no botão 'Fechar' de cada uma o mais rápido possível!",
+                    `0 / ${state.m4TotalNeeded} Concluídos`,
+                    0
+                );
+                document.getElementById('folders-container').classList.add('hidden');
+                removeDockHighlight();
+                setTimeout(spawnNotification, 800);
+            } else if (missionNum === 5) {
+                // MISSION 5: DASHBOARD REPORT
+                showStatsModal();
+            }
+            lucide.createIcons();
+        }
+
+        function updateAssistantCard(title, subtitle, desc, counterText, progressPercent) {
+            document.getElementById('assistant-title').textContent = title;
+            document.getElementById('assistant-subtitle').textContent = subtitle;
+            document.getElementById('assistant-description').textContent = desc;
+            document.getElementById('assistant-counter').textContent = counterText;
+            document.getElementById('assistant-progress-bar').style.width = `${progressPercent}%`;
+        }
+
+        function updateStepperBadges() {
+            [1, 2, 3, 4].forEach(step => {
+                const badge = document.getElementById(`step-${step}-badge`);
+                if (step === state.currentMission) {
+                    badge.className = "px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-semibold border border-cyan-500/30";
+                } else if (step < state.currentMission) {
+                    badge.className = "px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30";
+                } else {
+                    badge.className = "px-2 py-0.5 rounded-full text-slate-500";
+                }
+            });
+        }
+
+        /* ==========================================================================
+           4. MISSION 1: DRAG AND DROP IMPLEMENTATION
+           ========================================================================== */
+
+        function renderMission1Files() {
+            const container = document.getElementById('desktop-files-layer');
+            container.innerHTML = '';
+
+            const positions = [
+                { top: '25%', left: '10%' },
+                { top: '45%', left: '12%' },
+                { top: '65%', left: '10%' },
+                { top: '35%', left: '30%' }
+            ];
+
+            state.m1Files.forEach((file, index) => {
+                const el = document.createElement('div');
+                el.id = file.id;
+                el.draggable = true;
+                el.className = `file-item absolute pointer-events-auto cursor-grab active:cursor-grabbing p-3 rounded-2xl glass-card border border-white/10 flex items-center space-x-3 shadow-xl ${file.bg}`;
+                el.style.top = positions[index].top;
+                el.style.left = positions[index].left;
+
+                el.innerHTML = `
+                    <div class="p-2 rounded-xl bg-slate-900/80 ${file.color}">
+                        <i data-lucide="${file.icon}" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-slate-100">${file.name}</div>
+                        <div class="text-[10px] text-slate-400 font-mono">Arraste para a pasta</div>
+                    </div>
+                `;
+
+                // HTML5 Drag Events
+                el.ondragstart = (e) => {
+                    e.dataTransfer.setData('text/plain', JSON.stringify({ id: file.id, type: file.type }));
+                    el.classList.add('dragging');
+                    state.stats.dragEvents++;
+                    playAudio('click');
+                };
+
+                el.ondragend = () => {
+                    el.classList.remove('dragging');
+                };
+
+                container.appendChild(el);
+            });
+
+            // Set up Folder Dropzones
+            document.querySelectorAll('.folder-dropzone').forEach(dropzone => {
+                dropzone.ondragover = (e) => {
+                    e.preventDefault();
+                    dropzone.classList.add('drag-over');
+                };
+
+                dropzone.ondragleave = () => {
+                    dropzone.classList.remove('drag-over');
+                };
+
+                dropzone.ondrop = (e) => {
+                    e.preventDefault();
+                    dropzone.classList.remove('drag-over');
+                    const dataStr = e.dataTransfer.getData('text/plain');
+                    if (!dataStr) return;
+
+                    const data = JSON.parse(dataStr);
+                    const targetType = dropzone.dataset.targetType;
+
+                    if (data.type === targetType) {
+                        // SUCCESSFUL DROP
+                        playAudio('drop');
+                        const fileEl = document.getElementById(data.id);
+                        if (fileEl) fileEl.remove();
+
+                        state.m1Completed++;
+                        updateAssistantCard(
+                            "Missão 1: Organizar Área de Trabalho",
+                            "Treino de Arrastar e Soltar (Drag & Drop)",
+                            "Excelente! Arquivo movido corretamente.",
+                            `${state.m1Completed} / ${state.m1Files.length} Concluídos`,
+                            (state.m1Completed / state.m1Files.length) * 100
+                        );
+
+                        if (state.m1Completed >= state.m1Files.length) {
+                            playAudio('success');
+                            setTimeout(() => loadMission(2), 1000);
+                        }
+                    } else {
+                        // INCORRECT FOLDER DROP
+                        playAudio('error');
+                        state.stats.misclicks++;
+                    }
+                };
+            });
+        }
+
+        /* ==========================================================================
+           5. MISSION 2: RIGHT-CLICK CONTEXT MENU IMPLEMENTATION
+           ========================================================================== */
+
+        function renderMission2File() {
+            const container = document.getElementById('desktop-files-layer');
+            container.innerHTML = '';
+
+            const el = document.createElement('div');
+            el.id = state.m2FileTargetId;
+            el.className = `file-item absolute pointer-events-auto cursor-pointer p-4 rounded-2xl glass-card border border-amber-500/40 highlight-target flex items-center space-x-3 shadow-2xl bg-amber-500/10`;
+            el.style.top = '40%';
+            el.style.left = '40%';
+
+            el.innerHTML = `
+                <div class="p-2.5 rounded-xl bg-slate-900/80 text-amber-400">
+                    <i data-lucide="archive" class="w-7 h-7"></i>
+                </div>
+                <div>
+                    <div class="text-xs font-bold text-slate-100">arquivo_duplicado.zip</div>
+                    <div class="text-[10px] text-amber-300/80 font-mono">Clique com BOTÃO DIREITO aqui</div>
+                </div>
+            `;
+
+            // Prevent default browser context menu on this file
+            el.oncontextmenu = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                state.stats.rightClicks++;
+                playAudio('context');
+                showContextMenu(e.clientX, e.clientY);
+            };
+
+            container.appendChild(el);
+        }
+
+        function showContextMenu(x, y) {
+            const menu = document.getElementById('custom-context-menu');
+            menu.style.left = `${x}px`;
+            menu.style.top = `${y}px`;
+            menu.classList.remove('hidden');
+        }
+
+        function closeContext() {
+            document.getElementById('custom-context-menu').classList.add('hidden');
+        }
+
+        function handleContextOption(option) {
+            closeContext();
+            if (state.currentMission === 2) {
+                if (option === 'delete') {
+                    playAudio('success');
+                    const targetFile = document.getElementById(state.m2FileTargetId);
+                    if (targetFile) targetFile.remove();
+
+                    updateAssistantCard(
+                        "Missão 2: Ação Rápida no Menu de Opções",
+                        "Treino de Clique com o Botão Direito",
+                        "Perfeito! Você abriu o menu e excluiu o arquivo duplicado.",
+                        "1 / 1 Concluído",
+                        100
+                    );
+
+                    setTimeout(() => loadMission(3), 1200);
+                } else {
+                    playAudio('error');
+                    state.stats.misclicks++;
+                }
+            }
+        }
+
+        /* ==========================================================================
+           6. MISSION 3: DOUBLE-CLICK SPEED IMPLEMENTATION
+           ========================================================================== */
+
+        function highlightDockApp(appId) {
+            const app = document.getElementById(appId);
+            if (app) {
+                app.classList.add('highlight-target', 'ring-2', 'ring-emerald-400');
+            }
+        }
+
+        function removeDockHighlight() {
+            const app = document.getElementById('app-icon-browser');
+            if (app) {
+                app.classList.remove('highlight-target', 'ring-2', 'ring-emerald-400');
+            }
+        }
+
+        function handleBrowserDoubleClick() {
+            state.stats.doubleClicks++;
+            if (state.currentMission === 3) {
+                playAudio('success');
+                removeDockHighlight();
+
+                updateAssistantCard(
+                    "Missão 3: Abrir Programas Rapidamente",
+                    "Treino de Clique Duplo (Double Click)",
+                    "Excelente velocidade! O navegador foi aberto com sucesso.",
+                    "1 / 1 Concluído",
+                    100
+                );
+
+                openAppBrowser();
+                setTimeout(() => loadMission(4), 1800);
+            } else {
+                openAppBrowser();
+            }
+        }
+
+        function handleSingleClickWarning() {
+            state.stats.totalClicks++;
+            const now = Date.now();
+            const timeDiff = now - state.m3LastClickTime;
+            state.m3LastClickTime = now;
+
+            if (state.currentMission === 3 && timeDiff > 350) {
+                playAudio('error');
+                // Friendly hint if user clicks too slowly
+                const subtitle = document.getElementById('assistant-subtitle');
+                subtitle.textContent = "Dica: Dê dois cliques bem rápidos seguidos (clique-clique)!";
+                subtitle.classList.add('text-amber-400');
+            }
+        }
+
+        /* ==========================================================================
+           7. MISSION 4: REACTION TIME & NOTIFICATION CLEARING
+           ========================================================================== */
+
+        const sampleNotifications = [
+            { sender: 'Lucas (Slack)', msg: 'Você pode revisar o relatório de hoje?', icon: 'message-square', color: 'text-purple-400' },
+            { sender: 'Recursos Humanos', msg: 'Lembrete: Assinatura do ponto eletrônico', icon: 'mail', color: 'text-cyan-400' },
+            { sender: 'Sistema DeskOS', msg: 'Atualização de segurança disponível', icon: 'shield-alert', color: 'text-amber-400' },
+            { sender: 'Mariana (Teams)', msg: 'A reunião de alinhamento começa em 5 min', icon: 'video', color: 'text-blue-400' },
+            { sender: 'Gerente de Projetos', msg: 'Nova tarefa atribuída a você no board', icon: 'check-square', color: 'text-emerald-400' }
+        ];
+
+        function spawnNotification() {
+            if (state.currentMission !== 4 || state.m4Cleared >= state.m4TotalNeeded) return;
+
+            const zone = document.getElementById('notification-zone');
+            zone.innerHTML = ''; // clear previous
+
+            const data = sampleNotifications[state.m4Cleared % sampleNotifications.length];
+            const notif = document.createElement('div');
+            notif.className = "animate-pop pointer-events-auto absolute glass-panel p-4 rounded-2xl shadow-2xl border border-white/20 flex items-start space-x-3 max-w-xs z-50 bg-slate-900/90";
+
+            // Random positions on desktop corners
+            const positions = [
+                { top: '15%', right: '5%' },
+                { bottom: '20%', right: '5%' },
+                { top: '20%', left: '5%' },
+                { bottom: '25%', left: '8%' }
+            ];
+            const pos = positions[state.m4Cleared % positions.length];
+            Object.assign(notif.style, pos);
+
+            notif.innerHTML = `
+                <div class="p-2.5 rounded-xl bg-slate-800 ${data.color}">
+                    <i data-lucide="${data.icon}" class="w-5 h-5"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="text-xs font-bold text-slate-100 flex items-center justify-between">
+                        <span>${data.sender}</span>
+                        <span class="text-[9px] font-mono text-cyan-400">Agora</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300 mt-1 leading-snug truncate">${data.msg}</p>
+                    <div class="mt-2.5 flex items-center justify-end space-x-2">
+                        <button onclick="clearNotification(event)" class="px-3 py-1 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-[10px] transition shadow-md shadow-cyan-500/20">
+                            Fechar Notificação
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            zone.appendChild(notif);
+            lucide.createIcons();
+            playAudio('pop');
+            state.m4CurrentSpawnTime = Date.now();
+        }
+
+        function clearNotification(e) {
+            e.stopPropagation();
+            const reactionTime = Date.now() - state.m4CurrentSpawnTime;
+            state.m4ReactionTimes.push(reactionTime);
+            state.m4Cleared++;
+            playAudio('click');
+
+            const zone = document.getElementById('notification-zone');
+            zone.innerHTML = '';
+
+            updateAssistantCard(
+                "Missão 4: Agilidade e Foco na Rotina",
+                "Treino de Velocidade e Precisão de Clique",
+                `Tempo de reação nesta notificação: ${reactionTime} ms!`,
+                `${state.m4Cleared} / ${state.m4TotalNeeded} Concluídos`,
+                (state.m4Cleared / state.m4TotalNeeded) * 100
+            );
+
+            if (state.m4Cleared < state.m4TotalNeeded) {
+                setTimeout(spawnNotification, 600);
+            } else {
+                playAudio('success');
+                setTimeout(() => loadMission(5), 1000);
+            }
+        }
+
+        /* ==========================================================================
+           8. STATS DASHBOARD & FREE MODE
+           ========================================================================== */
+
+        function showStatsModal() {
+            // Calculate averages
+            const avgReaction = state.m4ReactionTimes.length > 0 
+                ? Math.round(state.m4ReactionTimes.reduce((a, b) => a + b, 0) / state.m4ReactionTimes.length)
+                : 320;
+
+            document.getElementById('stat-reaction-time').textContent = `${avgReaction} ms`;
+            document.getElementById('stat-total-clicks').textContent = `${state.stats.totalClicks + 15} Interações`;
+
+            let rating = "Produtividade PRO";
+            if (avgReaction < 350) rating = "Velocidade Elite ⚡";
+            else if (avgReaction < 500) rating = "Agilidade Intermediária 👍";
+            document.getElementById('stat-rating').textContent = rating;
+
+            document.getElementById('stats-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function enableFreeMode() {
+            document.getElementById('stats-modal').classList.add('hidden');
+            state.currentMission = 5;
+
+            updateAssistantCard(
+                "Modo Livre (Sandbox Desbloqueado)",
+                "Treine livremente suas habilidades digitais",
+                "Você concluiu todo o treinamento! Agora você pode criar, mover e interagir com o ambiente livremente.",
+                "Modo Sandbox Ativo",
+                100
+            );
+            document.getElementById('mission-status-indicator').innerHTML = `
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span class="text-emerald-400 font-bold">Modo Livre Ativo</span>
+            `;
+        }
+
+        function resetTraining() {
+            state.m1Completed = 0;
+            state.m4Cleared = 0;
+            state.m4ReactionTimes = [];
+            state.stats = { totalClicks: 0, rightClicks: 0, doubleClicks: 0, dragEvents: 0, misclicks: 0 };
+            document.getElementById('stats-modal').classList.add('hidden');
+            loadMission(1);
+        }
+
+        /* ==========================================================================
+           9. FLOATING APP WINDOWS (NAVIGATOR / NOTES)
+           ========================================================================== */
+
+        function openAppBrowser() {
+            const windowEl = document.getElementById('app-window');
+            document.getElementById('window-title').textContent = "Navegador DeskOS — Portal de Trabalho";
+            document.getElementById('window-content').innerHTML = `
+                <div class="space-y-4">
+                    <div class="p-4 bg-cyan-950/40 border border-cyan-800/50 rounded-xl flex items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-cyan-300 text-sm">Bem-vindo ao DeskOS Browser!</h3>
+                            <p class="text-slate-400 text-xs mt-0.5">Sua conexão com o fluxo de trabalho digital seguro.</p>
+                        </div>
+                        <span class="px-2.5 py-1 bg-emerald-500/20 text-emerald-300 rounded-full font-mono text-[10px] border border-emerald-500/30">ONLINE</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="p-3 bg-slate-900 border border-white/10 rounded-xl">
+                            <span class="font-bold text-slate-200">E-mails não lidos</span>
+                            <p class="text-2xl font-black text-cyan-400 font-mono mt-1">3 Mensagens</p>
+                        </div>
+                        <div class="p-3 bg-slate-900 border border-white/10 rounded-xl">
+                            <span class="font-bold text-slate-200">Tarefas do Dia</span>
+                            <p class="text-2xl font-black text-emerald-400 font-mono mt-1">100% Concluído</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            windowEl.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function openAppNotes() {
+            playAudio('click');
+            const windowEl = document.getElementById('app-window');
+            document.getElementById('window-title').textContent = "Bloco de Notas — Anotações de Produtividade";
+            document.getElementById('window-content').innerHTML = `
+                <div class="space-y-3 font-mono text-xs">
+                    <div class="text-amber-400 font-bold">// DICAS PARA AUMENTAR A VELOCIDADE DO MOUSE:</div>
+                    <p class="text-slate-300">1. Mantenha o pulso relaxado e apoie bem o antebraço na mesa.</p>
+                    <p class="text-slate-300">2. Use o clique com o botão direito para atalhos rápidos de remoção e renomeação.</p>
+                    <p class="text-slate-300">3. Treine a precisão do arrraste mantendo o botão esquerdo firme durante o movimento.</p>
+                </div>
+            `;
+            windowEl.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeAppWindow() {
+            document.getElementById('app-window').classList.add('hidden');
+        }
+
+        /* ==========================================================================
+           10. GLOBAL EVENT LISTENERS & INITIALIZATION
+           ========================================================================== */
+
+        function setupGlobalEventListeners() {
+            // Global click tracking
+            window.addEventListener('click', (e) => {
+                state.stats.totalClicks++;
+                closeContext();
+            });
+
+            // Global context menu intercept on desktop workspace
+            document.getElementById('desktop-workspace').addEventListener('contextmenu', (e) => {
+                // If not clicking a designated right-click file, allow custom menu in free mode
+                if (state.currentMission === 5) {
+                    e.preventDefault();
+                    showContextMenu(e.clientX, e.clientY);
+                } else if (state.currentMission !== 2) {
+                    e.preventDefault();
+                }
+            });
+        }
+
+        // Initialize Application
+        window.onload = initWorkspace;
+    </script>
+</body>
+</html>
