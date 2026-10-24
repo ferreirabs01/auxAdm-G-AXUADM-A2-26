@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestão Patrimonial - Didático</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; p: 0 !important; }
+            .print-page-break { page-break-after: always; }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto space-y-6">
+
+        <!-- Navegação / Cabeçalho (Oculto na Impressão) -->
+        <header class="no-print bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900">Tech Solutions - Controle Patrimonial</h1>
+                <p class="text-sm text-slate-500">Módulo de Atividades Práticas e Consolidação de Inventário</p>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="mudarAba('exercicios')" id="btn-tab-exercicios" class="px-4 py-2 rounded-lg font-semibold text-sm transition-all bg-indigo-600 text-white shadow-sm">
+                    📋 Lista de Exercícios (32 Alunos)
+                </button>
+                <button onclick="mudarAba('painel')" id="btn-tab-painel" class="px-4 py-2 rounded-lg font-semibold text-sm transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">
+                    📊 Painel & Importador XLSX
+                </button>
+            </div>
+        </header>
+
+        <!-- ABA 1: LISTA DE EXERCÍCIOS DOS ALUNOS (1 A 32) -->
+        <main id="aba-exercicios" class="space-y-6">
+            <div class="no-print bg-amber-50 border border-amber-200 p-4 rounded-lg flex justify-between items-center">
+                <p class="text-sm text-amber-800">
+                    <strong>Instruções aos Alunos:</strong> Cada aluno possui 10 itens atribuídos com seus respectivos códigos de patrimônio. Pesquise a imagem correspondente de cada item na internet, monte seu documento no Canva e insira o código de patrimônio correto antes de gerar a planilha XLSX.
+                </p>
+                <button onclick="window.print()" class="px-4 py-2 bg-amber-600 text-white text-xs font-bold rounded hover:bg-amber-700 transition">
+                    🖨️ Imprimir Lista de Exercícios
+                </button>
+            </div>
+
+            <div id="grid-alunos" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Injetado dinamicamente via JS -->
+            </div>
+        </main>
+
+        <!-- ABA 2: PAINEL DE IMPORTAÇÃO E CONSOLIDAÇÃO DA BANCA (LOCAL STORAGE) -->
+        <main id="aba-painel" class="hidden space-y-6">
+            
+            <!-- Controle de Importação e Ações -->
+            <div class="no-print bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                <h2 class="text-lg font-bold text-slate-900 border-b pb-2">Importar Planilhas dos Alunos (.XLSX)</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                    <div class="col-span-2">
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Selecione ou Arraste o arquivo XLSX enviado pelo Aluno:</label>
+                        <input type="file" id="input-xlsx" accept=".xlsx, .xls" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 rounded-lg cursor-pointer bg-slate-50">
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="imprimirRelatorio()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition shadow-sm flex items-center justify-center gap-1">
+                            🖨️ Imprimir Relatório
+                        </button>
+                        <button onclick="limparBanco()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-2.5 px-3 rounded-lg text-sm border border-rose-200 transition" title="Resetar o banco local">
+                            🗑️ Limpar
+                        </button>
+                    </div>
+                </div>
+                
+                <p class="text-xs text-slate-400 italic">
+                    * O sistema lê colunas no formato: <strong>item | setor | patrimonio | responsavel</strong>. Registros com patrimônios idênticos serão sobrescritos com as novas informações.
+                </p>
+            </div>
+
+            <!-- Resumo e Estatísticas -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 no-print">
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <span class="text-xs font-bold text-slate-400 uppercase">Total de Patrimônios Cadastrados</span>
+                    <p id="stat-total" class="text-3xl font-extrabold text-indigo-600 mt-1">0 / 320</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <span class="text-xs font-bold text-slate-400 uppercase">Setores Mapeados</span>
+                    <p id="stat-setores" class="text-3xl font-extrabold text-emerald-600 mt-1">0</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <span class="text-xs font-bold text-slate-400 uppercase">Status da Coleta</span>
+                    <p id="stat-porcentagem" class="text-3xl font-extrabold text-amber-500 mt-1">0%</p>
+                </div>
+            </div>
+
+            <!-- Tabela Consolidada de Ativos -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                    <h3 class="font-bold text-slate-800">Relatório Consolidado de Inventário Físico</h3>
+                    <span id="data-atualizacao" class="text-xs font-medium text-slate-500">Banco de Dados Vazio</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-slate-100 text-xs text-slate-700 uppercase tracking-wider border-b border-slate-200">
+                            <tr>
+                                <th class="px-4 py-3">Patrimônio</th>
+                                <th class="px-4 py-3">Descrição do Item</th>
+                                <th class="px-4 py-3">Setor / Local</th>
+                                <th class="px-4 py-3">Responsável</th>
+                                <th class="px-4 py-3 text-center no-print">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-patrimonio" class="divide-y divide-slate-100">
+                            <!-- Injetado via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+    <script>
+        // BASE DE DADOS DOS 32 ALUNOS X 10 ITENS = 320 ITENS
+        const catalogoCompleto = [
+            // Aluno 1
+            { pat: "PAT-1001", desc: "Notebook Lenovo ThinkPad T14 Intel i7 16GB RAM SSD 512GB" },
+            { pat: "PAT-1002", desc: "Monitor LG 24'' Full HD IPS VESA Ajuste de Altura" },
+            { pat: "PAT-1003", desc: "Cadeira Ergonômica Presidente em Tela Mesh com Apoio de Cabeça" },
+            { pat: "PAT-1004", desc: "Impressora Multifuncional HP LaserJet Pro M428fdw" },
+            { pat: "PAT-1005", desc: "Mesa de Escritório L em MDF 1,60m x 1,40m Cor Caldedônia" },
+            { pat: "PAT-1006", desc: "Nobreak Intelbras 1200VA Bi-Volt para Estação de Trabalho" },
+            { pat: "PAT-1007", desc: "Telefone IP Grandstream GXP1625 com 2 Linhas SIP" },
+            { pat: "PAT-1008", desc: "Trituradora de Papel Menno 15 Folhas Corte em Partículas" },
+            { pat: "PAT-1009", desc: "Cafeteira Expresso Nespresso Essenza Mini 110V" },
+            { pat: "PAT-1010", desc: "Gaveteiro Volante 3 Gavetas com Rodízios e Chave" },
+
+            // Aluno 2
+            { pat: "PAT-1011", desc: "Computador Desktop Dell OptiPlex Intel i5 8GB SSD 256GB" },
+            { pat: "PAT-1012", desc: "Monitor Samsung 27'' Curvo 75Hz Full HD" },
+            { pat: "PAT-1013", desc: "Cadeira Executiva Digitador com Braços Reguláveis NR17" },
+            { pat: "PAT-1014", desc: "Scanner de Mesa Fujitsu ScanSnap iX1600 Automático" },
+            { pat: "PAT-1015", desc: "Armário de Aço para Arquivo 2 Portas 4 Prateleiras" },
+            { pat: "PAT-1016", desc: "Ar Condicionado Split LG Dual Inverter 18.000 BTUs" },
+            { pat: "PAT-1017", desc: "Projetor Epson PowerLite E20 3400 Lumens HDMI" },
+            { pat: "PAT-1018", desc: "Purificador de Água Soft Everest Slim Refrigerado" },
+            { pat: "PAT-1019", desc: "Kit Teclado e Mouse Sem Fio Logitech MK270" },
+            { pat: "PAT-1020", desc: "Quadro Branco Diagramado 1,20m x 0,90m Moldura Alumínio" },
+
+            // Aluno 3
+            { pat: "PAT-1021", desc: "MacBook Air M2 13.6'' 8GB RAM SSD 256GB Cinza Espacial" },
+            { pat: "PAT-1022", desc: "Monitor Dell UltraSharp 27'' 4K USB-C Hub" },
+            { pat: "PAT-1023", desc: "Mesa de Reunião Oval 8 Lugares 2,40m Amadeirada" },
+            { pat: "PAT-1024", desc: "Poltrona para Recepção Estofada em Courvin Preto" },
+            { pat: "PAT-1025", desc: "Servidor de Rack Dell PowerEdge R450 Xeon 32GB RAM" },
+            { pat: "PAT-1026", desc: "Switch Cisco Catalyst 24 Portas Gigabit Managed" },
+            { pat: "PAT-1027", desc: "Relógio de Ponto Eletrônico Biométrico Portaria MTE" },
+            { pat: "PAT-1028", desc: "Forno Micro-ondas Brastemp 32 Litros Inox 110V" },
+            { pat: "PAT-1029", desc: "Frigobar Consul 120 Litros com Gavetão Multi-uso" },
+            { pat: "PAT-1030", desc: "Leitor de Código de Barras Bematech Laser USB" },
+
+            // Aluno 4
+            { pat: "PAT-1031", desc: "Notebook Acer Aspire 5 Intel i5 16GB SSD 512GB" },
+            { pat: "PAT-1032", desc: "Monitor AOC 21.5'' Full HD HDMI VGA" },
+            { pat: "PAT-1033", desc: "Cadeira Operacional Giratória Preta sem Braços" },
+            { pat: "PAT-1034", desc: "Impressora de Etiquetas Argox OS-214 Plus Térmica" },
+            { pat: "PAT-1035", desc: "Estante Aberta para Livros e Pastas 5 Prateleiras" },
+            { pat: "PAT-1036", desc: "Estabilizador Ragtech 1000VA 6 Tomadas" },
+            { pat: "PAT-1037", desc: "Webcam Logitech C920s Full HD 1080p com Proteção" },
+            { pat: "PAT-1038", desc: "Caixa de Som Amplificada para Auditório JBL EON610" },
+            { pat: "PAT-1039", desc: "Ventilador de Coluna Mondial 40cm Silencioso" },
+            { pat: "PAT-1040", desc: "Fragmentadora de Papel Aurora 8 Folhas em Tiras" },
+
+            // Aluno 5
+            { pat: "PAT-1041", desc: "iPad Air 10.9'' 64GB Wi-Fi com Apple Pencil 2" },
+            { pat: "PAT-1042", desc: "Suporte Articulado para 2 Monitores de Pistão a Gás" },
+            { pat: "PAT-1043", desc: "Mesa Diretoria Reta com Caixa de Conectividade 1,80m" },
+            { pat: "PAT-1044", desc: "Cofre Eletrônico Digital com Senha e Chave de Emergência" },
+            { pat: "PAT-1045", desc: "Geladeira Duplex Consul 386 Litros Frost Free Inox" },
+            { pat: "PAT-1046", desc: "Smart TV 55'' 4K UHD Samsung Crystal para Reuniões" },
+            { pat: "PAT-1047", desc: "Soundbar JBL Bar 2.1 Deep Bass com Subwoofer" },
+            { pat: "PAT-1048", desc: "Escada de Alumínio 7 Degraus Doméstica/Comercial" },
+            { pat: "PAT-1049", desc: "Balança Digital de Precisão para Encomendas até 50kg" },
+            { pat: "PAT-1050", desc: "Carrinho de Carga Dobrável Plataforma 150kg" }
+        ];
+
+        // Função para complementar os 32 alunos com gerador padronizado
+        function gerarTodosOs32Alunos() {
+            const lista = [...catalogoCompleto];
+            const tiposItens = ["Notebook", "Monitor", "Cadeira Ergonômica", "Impressora", "Mesa de Trabalho", "Ar Condicionado", "Nobreak", "Telefone IP", "Gaveteiro", "Quadro Branco"];
+            
+            for (let a = 6; a <= 32; a++) {
+                for (let i = 1; i <= 10; i++) {
+                    const patNum = 1000 + ((a - 1) * 10) + i;
+                    const itemTipo = tiposItens[(i - 1) % tiposItens.length];
+                    lista.push({
+                        pat: `PAT-${patNum}`,
+                        desc: `${itemTipo} Corporativo Padrão Modelo AX-${patNum}`
+                    });
+                }
+            }
+            return lista;
+        }
+
+        const base320Itens = gerarTodosOs32Alunos();
+        const STORAGE_KEY = 'patrimonio_tech_solutions_db';
+
+        // INICIALIZAÇÃO DA PÁGINA
+        document.addEventListener("DOMContentLoaded", () => {
+            renderizarExerciciosAlunos();
+            renderizarTabelaConsolidada();
+            
+            document.getElementById('input-xlsx').addEventListener('change', processarArquivoXLSX);
+        });
+
+        // TROCA DE ABAS
+        function mudarAba(aba) {
+            const elExercicios = document.getElementById('aba-exercicios');
+            const elPainel = document.getElementById('aba-painel');
+            const btnEx = document.getElementById('btn-tab-exercicios');
+            const btnPainel = document.getElementById('btn-tab-painel');
+
+            if (aba === 'exercicios') {
+                elExercicios.classList.remove('hidden');
+                elPainel.classList.add('hidden');
+                btnEx.className = "px-4 py-2 rounded-lg font-semibold text-sm transition-all bg-indigo-600 text-white shadow-sm";
+                btnPainel.className = "px-4 py-2 rounded-lg font-semibold text-sm transition-all bg-slate-100 text-slate-700 hover:bg-slate-200";
+            } else {
+                elExercicios.classList.add('hidden');
+                elPainel.classList.remove('hidden');
+                btnPainel.className = "px-4 py-2 rounded-lg font-semibold text-sm transition-all bg-indigo-600 text-white shadow-sm";
+                btnEx.className = "px-4 py-2 rounded-lg font-semibold text-sm transition-all bg-slate-100 text-slate-700 hover:bg-slate-200";
+            }
+        }
+
+        // RENDERIZA A LISTA DOS 32 ALUNOS
+        function renderizarExerciciosAlunos() {
+            const container = document.getElementById('grid-alunos');
+            container.innerHTML = '';
+
+            for (let a = 1; a <= 32; a++) {
+                const inicioIndex = (a - 1) * 10;
+                const itensAluno = base320Itens.slice(inicioIndex, inicioIndex + 10);
+                const alunoNum = a < 10 ? '0' + a : a;
+
+                let cardHTML = `
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm print-page-break">
+                        <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
+                            <h3 class="font-bold text-indigo-700 text-base">ALUNO ${alunoNum}</h3>
+                            <span class="text-xs bg-indigo-50 text-indigo-700 font-mono px-2 py-1 rounded border border-indigo-100">Faixa: PAT-${1001 + inicioIndex} a PAT-${1010 + inicioIndex}</span>
+                        </div>
+                        <ul class="space-y-2 text-xs text-slate-700">
+                `;
+
+                itensAluno.forEach((item, idx) => {
+                    cardHTML += `
+                        <li class="flex items-start gap-2 bg-slate-50 p-2 rounded border border-slate-100">
+                            <span class="font-mono font-bold text-slate-900 bg-slate-200 px-1.5 py-0.5 rounded text-[10px]">${item.pat}</span>
+                            <span class="flex-1 font-medium">${item.desc}</span>
+                        </li>
+                    `;
+                });
+
+                cardHTML += `
+                        </ul>
+                    </div>
+                `;
+                container.innerHTML += cardHTML;
+            }
+        }
+
+        // PROCESSA O ARQUIVO XLSX IMPORTADO
+        function processarArquivoXLSX(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const data = new Uint8Array(evt.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                
+                // Primeira aba
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const jsonRows = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+
+                if (jsonRows.length === 0) {
+                    alert("A planilha importada parece estar vazia.");
+                    return;
+                }
+
+                // Recupera BD local do LocalStorage
+                let db = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+                let atualizados = 0;
+                let novos = 0;
+
+                jsonRows.forEach(row => {
+                    // Normaliza as chaves das colunas para busca flexível
+                    const keys = Object.keys(row);
+                    const getItem = row[keys.find(k => k.toLowerCase().includes('item') || k.toLowerCase().includes('desc'))] || "Item sem descrição";
+                    const getSetor = row[keys.find(k => k.toLowerCase().includes('setor') || k.toLowerCase().includes('local'))] || "Não alocado";
+                    const getPatrimonio = (row[keys.find(k => k.toLowerCase().includes('patrimonio') || k.toLowerCase().includes('patrimônio') || k.toLowerCase().includes('tag') || k.toLowerCase().includes('codigo'))] || "").toString().trim().toUpperCase();
+                    const getResponsavel = row[keys.find(k => k.toLowerCase().includes('responsavel') || k.toLowerCase().includes('responsável'))] || "Não informado";
+
+                    if (getPatrimonio) {
+                        if (db[getPatrimonio]) {
+                            atualizados++;
+                        } else {
+                            novos++;
+                        }
+                        
+                        db[getPatrimonio] = {
+                            patrimonio: getPatrimonio,
+                            item: getItem,
+                            setor: getSetor,
+                            responsavel: getResponsavel,
+                            data: new Date().toLocaleString('pt-BR')
+                        };
+                    }
+                });
+
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+                renderizarTabelaConsolidada();
+                alert(`Sucesso! ${novos} novos itens inseridos e ${atualizados} itens atualizados no banco local.`);
+                e.target.value = ''; // Limpa o input
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // RENDERIZA A TABELA CONSOLIDADA DO LOCALSTORAGE
+        function renderizarTabelaConsolidada() {
+            const db = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+            const tbody = document.getElementById('tabela-patrimonio');
+            tbody.innerHTML = '';
+
+            const patrimonioKeys = Object.keys(db);
+            
+            // Atualiza estatísticas
+            document.getElementById('stat-total').innerText = `${patrimonioKeys.length} / 320`;
+            const setoresUnicos = new Set(Object.values(db).map(i => i.setor)).size;
+            document.getElementById('stat-setores').innerText = setoresUnicos;
+            const perc = ((patrimonioKeys.length / 320) * 100).toFixed(1);
+            document.getElementById('stat-porcentagem').innerText = `${perc}%`;
+
+            if (patrimonioKeys.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-4 py-8 text-center text-slate-400 italic">
+                            Nenhum dado importado até o momento. Faça o upload do primeiro arquivo .xlsx enviado pelos alunos.
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('data-atualizacao').innerText = "Sem dados";
+                return;
+            }
+
+            document.getElementById('data-atualizacao').innerText = `Última atualização: ${new Date().toLocaleTimeString('pt-BR')}`;
+
+            // Ordena pelo código PAT
+            patrimonioKeys.sort().forEach(pat => {
+                const dado = db[pat];
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-colors";
+                tr.innerHTML = `
+                    <td class="px-4 py-3 font-mono font-bold text-indigo-600 text-xs">${dado.patrimonio}</td>
+                    <td class="px-4 py-3 font-medium text-slate-800">${dado.item}</td>
+                    <td class="px-4 py-3">${dado.setor}</td>
+                    <td class="px-4 py-3">${dado.responsavel}</td>
+                    <td class="px-4 py-3 text-center no-print">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-emerald-100 text-emerald-800">
+                            ✓ Ativado
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // RESET DO BANCO LOCAL
+        function limparBanco() {
+            if (confirm("Tem certeza que deseja limpar todo o banco de dados local? Todos os dados importados serão apagados.")) {
+                localStorage.removeItem(STORAGE_KEY);
+                renderizarTabelaConsolidada();
+            }
+        }
+
+        // IMPRESSÃO DO RELATÓRIO CONSOLIDADO
+        function imprimirRelatorio() {
+            window.print();
+        }
+    </script>
+</body>
+</html>
