@@ -1,1 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Etiquetas de Patrimônio - 32 Alunos (320 Etiquetas)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+128&family=Inter:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4 landscape;
+      margin: 8mm;
+    }
 
+    body {
+      margin: 0;
+      padding: 15px;
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+
+    /* Cabeçalho de Instruções da Tela */
+    .no-print-header {
+      background: #ffffff;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #e2e8f0;
+    }
+
+    .btn-print {
+      background-color: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-print:hover {
+      background-color: #1d4ed8;
+    }
+
+    /* Estrutura por Aluno */
+    .aluno-row {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 8px;
+      margin-bottom: 12px;
+      page-break-inside: avoid;
+    }
+
+    .aluno-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 6px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .aluno-header .faixa {
+      color: #2563eb;
+      font-family: monospace;
+      font-size: 12px;
+    }
+
+    /* Grid de 10 Etiquetas por Linha */
+    .tags-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 4px;
+    }
+
+    .etiqueta {
+      border: 1px dashed #94a3b8;
+      border-radius: 4px;
+      padding: 4px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      box-sizing: border-box;
+      text-align: center;
+      background: #ffffff;
+      height: 62px;
+    }
+
+    .empresa {
+      font-size: 5.5pt;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+
+    .barcode {
+      font-family: 'Libre Barcode 128', cursive;
+      font-size: 22pt;
+      line-height: 0.9;
+      margin: 1px 0;
+    }
+
+    .codigo {
+      font-size: 5.5pt;
+      font-weight: 700;
+      color: #334155;
+      font-family: monospace;
+    }
+
+    /* Otimização para Impressão */
+    @media print {
+      .no-print-header {
+        display: none !important;
+      }
+      body {
+        background: #ffffff;
+        padding: 0;
+      }
+      .aluno-row {
+        border-color: #cbd5e1;
+        box-shadow: none;
+        margin-bottom: 8mm;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="no-print-header">
+    <div>
+      <h2 style="margin:0; font-size: 16px;">Painel de Etiquetas - 32 Alunos (10 por linha)</h2>
+      <p style="margin:4px 0 0 0; font-size: 12px; color: #64748b;">
+        Total de 320 patrimônios gerados (PAT-1001 a PAT-1320). Clique no botão ao lado para salvar em PDF.
+      </p>
+    </div>
+    <button class="btn-print" onclick="window.print()">Imprimir / Salvar em PDF</button>
+  </div>
+
+  <div id="container"></div>
+
+  <script>
+    const container = document.getElementById('container');
+    let currentCode = 1001;
+    const totalAlunos = 32;
+    const etiquetasPorAluno = 10;
+
+    for (let aluno = 1; aluno <= totalAlunos; aluno++) {
+      const alunoNum = aluno < 10 ? '0' + aluno : aluno;
+      const startCode = `PAT-${currentCode}`;
+      const endCode = `PAT-${currentCode + etiquetasPorAluno - 1}`;
+      
+      let rowHTML = `
+        <div class="aluno-row">
+          <div class="aluno-header">
+            <span>ALUNO ${alunoNum}</span>
+            <span class="faixa">Faixa: ${startCode} até ${endCode}</span>
+          </div>
+          <div class="tags-grid">
+      `;
+
+      for (let e = 0; e < etiquetasPorAluno; e++) {
+        const cod = `PAT-${currentCode}`;
+        rowHTML += `
+          <div class="etiqueta">
+            <div class="empresa">TECH SOLUTIONS</div>
+            <div class="barcode">${cod}</div>
+            <div class="codigo">${cod}</div>
+          </div>
+        `;
+        currentCode++;
+      }
+
+      rowHTML += `
+          </div>
+        </div>
+      `;
+      
+      container.innerHTML += rowHTML;
+    }
+  </script>
+
+</body>
+</html>
