@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP Tech Solutions - Gestão Corporativa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .print-only { display: none !important; }
+
+        /* ESTILOS DE IMPRESSÃO (PDF) */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
+            
+            .no-print, .erp-sidebar, .erp-topbar, .erp-controls, button, input {
+                display: none !important;
+            }
+
+            body {
+                background-color: #ffffff !important;
+                color: #0f172a !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                font-family: Arial, sans-serif !important;
+                font-size: 9pt !important;
+            }
+
+            .erp-main-content {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .print-only {
+                display: flex !important;
+            }
+
+            .erp-table-wrapper {
+                box-shadow: none !important;
+                border: none !important;
+                margin-top: 15px !important;
+            }
+
+            table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                font-size: 8.5pt !important;
+            }
+
+            th {
+                background-color: #0f172a !important;
+                color: #ffffff !important;
+                padding: 6px 8px !important;
+                border: 1px solid #0f172a !important;
+                text-transform: uppercase;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            td {
+                padding: 5px 8px !important;
+                border: 1px solid #cbd5e1 !important;
+            }
+
+            tr:nth-child(even) td {
+                background-color: #f8fafc !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .col-acoes {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-900 font-sans text-slate-800 antialiased min-h-screen">
+
+    <div class="flex h-screen overflow-hidden">
+
+        <!-- BARRA LATERAL (SIDEBAR ERP) -->
+        <aside class="erp-sidebar w-64 bg-slate-900 text-slate-300 flex flex-col border-r border-slate-800 no-print flex-shrink-0">
+            <!-- Brand -->
+            <div class="p-5 border-b border-slate-800 flex items-center gap-3">
+                <div class="w-9 h-9 bg-blue-600 text-white font-black rounded-lg flex items-center justify-center text-lg shadow-lg">TS</div>
+                <div>
+                    <h1 class="font-extrabold text-white text-base tracking-wider">TECH ERP</h1>
+                    <p class="text-[10px] text-slate-400 uppercase tracking-widest">Enterprise v4.2</p>
+                </div>
+            </div>
+
+            <!-- Navegação -->
+            <nav class="flex-1 p-4 space-y-1 overflow-y-auto text-sm font-medium">
+                <div class="px-3 py-2 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Módulos Principais</div>
+                
+                <button onclick="navegarModulo('estoque')" id="nav-estoque" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-blue-600 text-white font-semibold shadow transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                    Gestão de Estoque
+                </button>
+
+                <button onclick="navegarModulo('vendas')" id="nav-vendas" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    Histórico de Vendas
+                </button>
+
+                <div class="pt-4 px-3 py-2 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Sistema</div>
+                <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+                    Configurações
+                </a>
+            </nav>
+
+            <!-- Usuário -->
+            <div class="p-4 border-t border-slate-800 flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center text-xs">IB</div>
+                <div class="overflow-hidden">
+                    <p class="text-xs font-bold text-white truncate">Instrutor Bruno</p>
+                    <p class="text-[10px] text-slate-400 truncate">bruno.ferreira@techsolutions.com</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ÁREA PRINCIPAL -->
+        <div class="flex-1 flex flex-col bg-slate-50 overflow-y-auto erp-main-content">
+            
+            <!-- TOPBAR ERP -->
+            <header class="erp-topbar bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center no-print">
+                <div class="flex items-center gap-4">
+                    <span class="text-xs font-semibold bg-blue-50 text-blue-700 px-2.5 py-1 rounded border border-blue-100">Unidade: Almoxarifado Central</span>
+                    <span class="text-xs text-slate-400">|</span>
+                    <span class="text-xs text-slate-500 font-medium">Categoria: <strong>Papelaria & Material de Escritório</strong></span>
+                </div>
+
+                <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-5 rounded-lg text-sm shadow transition flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    📄 Exportar Relatório Oficial (PDF)
+                </button>
+            </header>
+
+            <!-- MÓDULO 1: GESTÃO DE ESTOQUE (PADRÃO) -->
+            <div id="modulo-estoque" class="p-8">
+
+                <!-- Header de Impressão (PDF) -->
+                <div class="print-only flex-col w-full pb-4 mb-4 border-b-2 border-slate-900">
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <span class="text-xl font-black text-slate-900 uppercase">Tech Solutions S.A.</span>
+                            <p class="text-xs text-slate-600">Sistema ERP Corporativo — Relatório de Posição Cadastral do Estoque</p>
+                        </div>
+                        <div class="text-right text-xs text-slate-700 space-y-0.5">
+                            <p><strong>Emissão:</strong> 31/10/2026 às 10:00h</p>
+                            <p><strong>Emitido Por:</strong> Instrutor Bruno</p>
+                            <p><strong>Módulo:</strong> Gestão de Estoque</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Métricas do Estoque -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6 no-print">
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Itens Mapeados</span>
+                        <p class="text-2xl font-black text-slate-900 mt-1">20 Produtos</p>
+                        <span class="text-[11px] text-emerald-600 font-semibold">✓ 100% Cadastrados</span>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Quantidade Total em Estoque</span>
+                        <p class="text-2xl font-black text-indigo-600 mt-1">451 Caixas / Pacotes</p>
+                        <span class="text-[11px] text-slate-500">Saldo Fisico em Almoxarifado</span>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Valor Imobilizado (ERP)</span>
+                        <p class="text-2xl font-black text-blue-600 mt-1">R$ 25.363,00</p>
+                        <span class="text-[11px] text-slate-500">Valor Total Acumulado</span>
+                    </div>
+                </div>
+
+                <!-- Tabela de Estoque -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden erp-table-wrapper">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-slate-900 text-white text-xs uppercase tracking-wider">
+                            <tr>
+                                <th class="px-4 py-3 font-semibold">Código</th>
+                                <th class="px-4 py-3 font-semibold">Descrição do Material</th>
+                                <th class="px-4 py-3 font-semibold text-right">Custo Unit. (R$)</th>
+                                <th class="px-4 py-3 font-semibold text-center">Qtd ERP</th>
+                                <th class="px-4 py-3 font-semibold text-right">Valor Total (R$)</th>
+                                <th class="px-4 py-3 font-semibold text-center col-acoes no-print">Status ERP</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-xs">
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-001</td><td class="px-4 py-2.5 font-medium text-slate-800">Caneta Esferográfica Azul (Cx 50)</td><td class="px-4 py-2.5 text-right font-mono">R$ 42,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">38</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 1.596,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-002</td><td class="px-4 py-2.5 font-medium text-slate-800">Caneta Esferográfica Preta (Cx 50)</td><td class="px-4 py-2.5 text-right font-mono">R$ 42,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">25</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 1.050,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-003</td><td class="px-4 py-2.5 font-medium text-slate-800">Caneta Esferográfica Vermelha (Cx 50)</td><td class="px-4 py-2.5 text-right font-mono">R$ 42,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">18</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 756,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-004</td><td class="px-4 py-2.5 font-medium text-slate-800">Lápis Preto HB nº 2 (Cx 72)</td><td class="px-4 py-2.5 text-right font-mono">R$ 38,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">15</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 570,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-005</td><td class="px-4 py-2.5 font-medium text-slate-800">Borracha Branca Escolar (Cx 40)</td><td class="px-4 py-2.5 text-right font-mono">R$ 28,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">22</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 616,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-006</td><td class="px-4 py-2.5 font-medium text-slate-800">Apontador c/ Depósito (Cx 24)</td><td class="px-4 py-2.5 text-right font-mono">R$ 36,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">10</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 360,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded text-[10px] font-bold">Atenção</span></td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-007</td><td class="px-4 py-2.5 font-medium text-slate-800">Papel A4 Sulfite 75g (Cx 10 resmas)</td><td class="px-4 py-2.5 text-right font-mono">R$ 260,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">45</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 11.700,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-008</td><td class="px-4 py-2.5 font-medium text-slate-800">Papel A3 Sulfite 75g (Resma 500 fls)</td><td class="px-4 py-2.5 text-right font-mono">R$ 65,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">12</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 780,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-009</td><td class="px-4 py-2.5 font-medium text-slate-800">Bloco Notas Autoadesiva (Pct 12)</td><td class="px-4 py-2.5 text-right font-mono">R$ 48,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">35</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 1.680,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-010</td><td class="px-4 py-2.5 font-medium text-slate-800">Marcador de Texto Amarelo (Cx 12)</td><td class="px-4 py-2.5 text-right font-mono">R$ 32,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">25</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 800,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-011</td><td class="px-4 py-2.5 font-medium text-slate-800">Grampeador de Mesa MPT-26/6</td><td class="px-4 py-2.5 text-right font-mono">R$ 45,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">14</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 630,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-012</td><td class="px-4 py-2.5 font-medium text-slate-800">Caixa de Grampos 26/6 (Cx 5000)</td><td class="px-4 py-2.5 text-right font-mono">R$ 12,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">45</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 540,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-013</td><td class="px-4 py-2.5 font-medium text-slate-800">Perfurador de Papel 2 Furos</td><td class="px-4 py-2.5 text-right font-mono">R$ 55,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">8</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 440,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-014</td><td class="px-4 py-2.5 font-medium text-slate-800">Clip de Aço nº 2/0 (Cx 500g)</td><td class="px-4 py-2.5 text-right font-mono">R$ 18,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">30</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 540,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-015</td><td class="px-4 py-2.5 font-medium text-slate-800">Tesoura Escritório 17cm</td><td class="px-4 py-2.5 text-right font-mono">R$ 14,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">20</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 280,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-016</td><td class="px-4 py-2.5 font-medium text-slate-800">Fita Adesiva Transp. 12x50m (Pct 6)</td><td class="px-4 py-2.5 text-right font-mono">R$ 24,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">18</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 432,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-017</td><td class="px-4 py-2.5 font-medium text-slate-800">Cola em Bastão 21g (Cx 12)</td><td class="px-4 py-2.5 text-right font-mono">R$ 54,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">12</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 648,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-018</td><td class="px-4 py-2.5 font-medium text-slate-800">Pasta Suspensa Plast. (Pct 25)</td><td class="px-4 py-2.5 text-right font-mono">R$ 85,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">9</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 765,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded text-[10px] font-bold">Atenção</span></td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-019</td><td class="px-4 py-2.5 font-medium text-slate-800">Pasta A-Z Registradora Larga</td><td class="px-4 py-2.5 text-right font-mono">R$ 22,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">25</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 550,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-020</td><td class="px-4 py-2.5 font-medium text-slate-800">Envelope Saco A4 Kraft (Pct 100)</td><td class="px-4 py-2.5 text-right font-mono">R$ 45,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">14</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 630,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                        </tbody>
+                        <tfoot class="bg-slate-100 font-bold text-slate-900 text-xs">
+                            <tr>
+                                <td colspan="3" class="px-4 py-3 text-right">TOTAL GERAL EM ESTOQUE:</td>
+                                <td class="px-4 py-3 text-center">451</td>
+                                <td class="px-4 py-3 text-right text-blue-700 font-mono text-sm">R$ 25.363,00</td>
+                                <td class="col-acoes no-print"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Rodapé PDF -->
+                <div class="print-only w-full justify-between items-center mt-6 pt-3 border-t border-slate-300 text-[9pt] text-slate-600">
+                    <p><strong>Status de Validação:</strong> Aguardando Entrada de Inventário Físico</p>
+                    <p class="italic">relatorio ficticio de aprendizagem utilizado no cuso de Auxiliar Administrativo - 2026 - Bruno Ferreira</p>
+                </div>
+
+            </div>
+
+            <!-- MÓDULO 2: HISTÓRICO DE VENDAS & DEMANDA -->
+            <div id="modulo-vendas" class="p-8 hidden">
+
+                <!-- Header de Impressão (PDF Vendas) -->
+                <div class="print-only flex-col w-full pb-4 mb-4 border-b-2 border-slate-900">
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <span class="text-xl font-black text-slate-900 uppercase">Tech Solutions S.A.</span>
+                            <p class="text-xs text-slate-600">Sistema ERP Corporativo — Relatório de Histórico de Consumo & Demanda</p>
+                        </div>
+                        <div class="text-right text-xs text-slate-700 space-y-0.5">
+                            <p><strong>Emissão:</strong> 31/10/2026 às 10:00h</p>
+                            <p><strong>Emitido Por:</strong> Instrutor Bruno</p>
+                            <p><strong>Módulo:</strong> Histórico de Vendas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Métricas do Histórico de Vendas -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6 no-print">
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Vendas Mês Anterior</span>
+                        <p class="text-2xl font-black text-indigo-600 mt-1">318 Unidades</p>
+                        <span class="text-[11px] text-slate-500">Mês de Setembro/2026</span>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Vendas Mês (Ano Anterior)</span>
+                        <p class="text-2xl font-black text-purple-600 mt-1">334 Unidades</p>
+                        <span class="text-[11px] text-slate-500">Mês de Outubro/2025</span>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Média Mensal Estimada</span>
+                        <p class="text-2xl font-black text-emerald-600 mt-1">326 Unidades / Mês</p>
+                        <span class="text-[11px] text-emerald-600 font-semibold">Projeção de Saídas</span>
+                    </div>
+                </div>
+
+                <!-- Tabela de Histórico de Vendas -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden erp-table-wrapper">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-slate-900 text-white text-xs uppercase tracking-wider">
+                            <tr>
+                                <th class="px-4 py-3 font-semibold">Código</th>
+                                <th class="px-4 py-3 font-semibold">Descrição do Material</th>
+                                <th class="px-4 py-3 font-semibold text-center">Qtd Atual ERP</th>
+                                <th class="px-4 py-3 font-semibold text-center">Vendas (Mês Ant.)</th>
+                                <th class="px-4 py-3 font-semibold text-center">Vendas (Ano Ant.)</th>
+                                <th class="px-4 py-3 font-semibold text-center">Média Móvel / Demanda</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-xs">
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-001</td><td class="px-4 py-2.5 font-medium text-slate-800">Caneta Esferográfica Azul (Cx 50)</td><td class="px-4 py-2.5 text-center font-bold">38</td><td class="px-4 py-2.5 text-center">20</td><td class="px-4 py-2.5 text-center">22</td><td class="px-4 py-2.5 text-center font-bold text-emerald-600">21,0</td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-002</td><td class="px-4 py-2.5 font-medium text-slate-800">Caneta Esferográfica Preta (Cx 50)</td><td class="px-4 py-2.5 text-center font-bold">25</td><td class="px-4 py-2.5 text-center">15</td><td class="px-4 py-2.5 text-center">18</td><td class="px-4 py-2.5 text-center font-bold text-emerald-600">16,5</td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-003</td><td class="px-4 py-2.5 font-medium text-slate-800">Caneta Esferográfica Vermelha (Cx 50)</td><td class="px-4 py-2.5 text-center font-bold">18</td><td class="px-4 py-2.5 text-center">10</td><td class="px-4 py-2.5 text-center">12</td><td class="px-4 py-2.5 text-center font-bold text-emerald-600">11,0</td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-004</td><td class="px-4 py-2.5 font-medium text-slate-800">Lápis Preto HB nº 2 (Cx 72)</td><td class="px-4 py-2.5 text-center font-bold">15</td><td class="px-4 py-2.5 text-center">12</td><td class="px-4 py-2.5 text-center">10</td><td class="px-4 py-2.5 text-center font-bold text-emerald-600">11,0</td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-005</td><td class="px-4 py-2.5 font-medium text-slate-800">Borracha Branca Escolar (Cx 40)</td><td class="px-4 py-2.5 text-center font-bold">22</td><td class="px-4 py-2.5 text-center">14</td><td class="px-4 py-2.5 text-center">15</td><td class="px-4 py-2.5 text-center font-bold text-emerald-600">14,5</td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-006</td><td class="px-4 py-2.5 font-medium text-slate-800">Apontador c/ Depósito (Cx 24)</td><td class="px-4 py-2.5 text-center font-bold">10</td><td class="px-4 py-2.5 text-center">18</td><td class="px-4 py-2.5 text-center">20</td><td class="px-4 py-2.5 text-center font-bold text-rose-600">19,0</td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-007</td><td class="px-4 py-2.5 font-medium text-slate-800">Papel A4 Sulfite 75g (Cx 10 resmas)</td><td class="px-4 py-2.5 text-center font-bold">45</td><td class="px-4 py-2.5 text-center">35</td><td class="px-4 py-2.5 text-center">40</td><td class="px-4 py-2.5 text-center font-bold text-emerald-600">37,5</td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-008</td><td class="px-4 py-2.5 font-medium text-slate-800">Papel A3 Sulfite 75g (Resma 500 fls)</td><td class="px-4 py-2.5 text-center font-bold">12</td><td class="px-4 py-2.5 text-center">8</td><td class="px-4 py-2.5 text-center">10</td><td class="px-4 py-2.5 text-center font-bold text-emerald-600">9,0</td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-009</td><td class="px-4 py-2.5 font-medium text-slate-800">Bloco Notas Autoadesiva (Pct 12)</td><td class="px-4 py-2.5 text-center font-bold">35</td><td class="px-4 py-2.5 text-center">25</td><td class="px-4 py-2.5 text-center">22</td><td class="px-4 py-2.5 text-center font-bold text-emerald-600">23,5</td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-010</td><td class="px-4 py-2.5 font-medium text-slate-800">Marcador de Texto Amarelo (Cx 12)</td><td class="px-4 py-2.5 text-center font-bold">25</td><td class="px-4 py-2.5 text-center">20</td><td class="px-4 py-2.5 text-center">18</td><td class="px-4 py-2.5 text-center font-bold text-emerald-600">19,0</td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-011</td><td class="px-4 py-2.5 font-medium text-slate-800">Grampeador de Mesa MPT-26/6</td><td class="px-4 py-2.5 text-center font-bold">14</td><td class="px-4 py-2.5 text-center">5</td><td class="px-4 py-2.5 text-center">6</td><td class="px-4 py-2.5 text-center font-bold text-emerald-600">5,5</td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-012</td><td class="px-4 py-2.5 font-medium text-slate-800">Caixa de Grampos 26/6 (Cx 5000)</td><td class="px-4 py-2.5 text-center font-bold">45</td><td class="px-4 py-2.5 text-center">30</td><td class="px-4 py-2.5 text-center">28</td><td class="px-4 py-2.5 text-center font-bold text-emerald-600">29,0</td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-013</td><td class="px-4 py-2.5 font-medium text-slate-800">Perfurador de Papel 2 Furos</td><td class="px-4 py-2.5 text-center font-bold">8</td><td class="px-4 py-2.5 text-center">3</td><td class="px-4 py-2.5 text-center">4</td><td class="px-4 py-2.5 text-center font-bold text-emerald-600">3,5</td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-014</td><td class="px-4 py-2.5 font-medium text-slate-800">Clip de Aço nº 2/0 (Cx 500g)</td><td class="px-4 py-2.5 text-center font-bold">30</td><td class="px-4 py-2.5 text-center">22</td><td class="px-4 py-2.5 text-center">20</td><td class="px-4 py-2.5 text-center font-bold text-emerald-600">21,0</td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-015</td><td class="px-4 py-2.5 font-medium text-slate-800">Tesoura Escritório 17cm</td><td class="px-4 py-2.5 text-center font-bold">20</td><td class="px-4 py-2.5 text-center">8</td><td class="px-4 py-2.5 text-center">10</td><td class="px-4 py-2.5 text-center font-bold text-emerald-600">9,0</td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-016</td><td class="px-4 py-2.5 font-medium text-slate-800">Fita Adesiva Transp. 12x50m (Pct 6)</td><td class="px-4 py-2.5 text-center font-bold">18</td><td class="px-4 py-2.5 text-center">15</td><td class="px-4 py-2.5 text-center">14</td><td class="px-4 py-2.5 text-center font-bold text-emerald-600">14,5</td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-017</td><td class="px-4 py-2.5 font-medium text-slate-800">Cola em Bastão 21g (Cx 12)</td><td class="px-4 py-2.5 text-center font-bold">12</td><td class="px-4 py-2.5 text-center">10</td><td class="px-4 py-2.5 text-center">12</td><td class="px-4 py-2.5 text-center font-bold text-emerald-600">11,0</td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-018</td><td class="px-4 py-2.5 font-medium text-slate-800">Pasta Suspensa Plast. (Pct 25)</td><td class="px-4 py-2.5 text-center font-bold">9</td><td class="px-4 py-2.5 text-center">18</td><td class="px-4 py-2.5 text-center">20</td><td class="px-4 py-2.5 text-center font-bold text-rose-600">19,0</td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-019</td><td class="px-4 py-2.5 font-medium text-slate-800">Pasta A-Z Registradora Larga</td><td class="px-4 py-2.5 text-center font-bold">25</td><td class="px-4 py-2.5 text-center">12</td><td class="px-4 py-2.5 text-center">15</td><td class="px-4 py-2.5 text-center font-bold text-emerald-600">13,5</td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-020</td><td class="px-4 py-2.5 font-medium text-slate-800">Envelope Saco A4 Kraft (Pct 100)</td><td class="px-4 py-2.5 text-center font-bold">14</td><td class="px-4 py-2.5 text-center">16</td><td class="px-4 py-2.5 text-center">18</td><td class="px-4 py-2.5 text-center font-bold text-emerald-600">17,0</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Rodapé PDF Vendas -->
+                <div class="print-only w-full justify-between items-center mt-6 pt-3 border-t border-slate-300 text-[9pt] text-slate-600">
+                    <p><strong>Status da Análise:</strong> Média Movel Calculada com Sucesso</p>
+                    <p class="italic">relatorio ficticio de aprendizagem utilizado no cuso de Auxiliar Administrativo - 2026 - Bruno Ferreira</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- SCRIPT DE TRATAMENTO DE NAVEGAÇÃO -->
+    <script>
+        function navegarModulo(modulo) {
+            const modEstoque = document.getElementById('modulo-estoque');
+            const modVendas = document.getElementById('modulo-vendas');
+            const navEstoque = document.getElementById('nav-estoque');
+            const navVendas = document.getElementById('nav-vendas');
+
+            if (modulo === 'estoque') {
+                modEstoque.classList.remove('hidden');
+                modVendas.classList.add('hidden');
+                
+                navEstoque.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-blue-600 text-white font-semibold shadow transition";
+                navVendas.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition";
+            } else {
+                modEstoque.classList.add('hidden');
+                modVendas.classList.remove('hidden');
+
+                navVendas.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-blue-600 text-white font-semibold shadow transition";
+                navEstoque.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition";
+            }
+        }
+    </script>
+</body>
+</html>
