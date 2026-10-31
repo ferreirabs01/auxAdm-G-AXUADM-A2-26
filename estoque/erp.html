@@ -8,13 +8,14 @@
     <style>
         .print-only { display: none !important; }
 
-        /* ESTILOS DE IMPRESSÃO (PDF) */
+        /* REGRAS DE IMPRESSÃO GERADAS VIA PDF */
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 10mm;
+                margin: 8mm;
             }
             
+            /* Oculta interface de software, menus e botões */
             .no-print, .erp-sidebar, .erp-topbar, .erp-controls, button, input {
                 display: none !important;
             }
@@ -25,7 +26,7 @@
                 padding: 0 !important;
                 margin: 0 !important;
                 font-family: Arial, sans-serif !important;
-                font-size: 9pt !important;
+                font-size: 8.5pt !important;
             }
 
             .erp-main-content {
@@ -33,26 +34,31 @@
                 margin: 0 !important;
             }
 
-            .print-only {
-                display: flex !important;
+            /* Alternância dinâmica do que é impresso via JavaScript */
+            body.print-mode-relatorio .print-relatorio-section {
+                display: block !important;
+            }
+
+            body.print-mode-ficha .print-ficha-section {
+                display: block !important;
             }
 
             .erp-table-wrapper {
                 box-shadow: none !important;
                 border: none !important;
-                margin-top: 15px !important;
+                margin-top: 10px !important;
             }
 
             table {
                 width: 100% !important;
                 border-collapse: collapse !important;
-                font-size: 8.5pt !important;
+                font-size: 8pt !important;
             }
 
             th {
                 background-color: #0f172a !important;
                 color: #ffffff !important;
-                padding: 6px 8px !important;
+                padding: 5px 6px !important;
                 border: 1px solid #0f172a !important;
                 text-transform: uppercase;
                 -webkit-print-color-adjust: exact;
@@ -60,7 +66,7 @@
             }
 
             td {
-                padding: 5px 8px !important;
+                padding: 5px 6px !important;
                 border: 1px solid #cbd5e1 !important;
             }
 
@@ -122,42 +128,35 @@
             </div>
         </aside>
 
-        <!-- ÁREA PRINCIPAL -->
+        <!-- ÁREA PRINCIPAL DO SOFTWARE -->
         <div class="flex-1 flex flex-col bg-slate-50 overflow-y-auto erp-main-content">
             
             <!-- TOPBAR ERP -->
-            <header class="erp-topbar bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center no-print">
+            <header class="erp-topbar bg-white border-b border-slate-200 px-8 py-4 flex flex-col lg:flex-row justify-between items-center gap-4 no-print">
                 <div class="flex items-center gap-4">
                     <span class="text-xs font-semibold bg-blue-50 text-blue-700 px-2.5 py-1 rounded border border-blue-100">Unidade: Almoxarifado Central</span>
                     <span class="text-xs text-slate-400">|</span>
                     <span class="text-xs text-slate-500 font-medium">Categoria: <strong>Papelaria & Material de Escritório</strong></span>
                 </div>
 
-                <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-5 rounded-lg text-sm shadow transition flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    📄 Exportar Relatório Oficial (PDF)
-                </button>
+                <!-- Grupo de Botões de Impressão -->
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="imprimirRelatorioOficial()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-xs shadow transition flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        📄 Relatório Oficial (com Valores)
+                    </button>
+
+                    <button onclick="imprimirFichaConferencia()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg text-xs shadow transition flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                        📋 Ficha de Conferência (para Contagem)
+                    </button>
+                </div>
             </header>
 
-            <!-- MÓDULO 1: GESTÃO DE ESTOQUE (PADRÃO) -->
+            <!-- TELA DO MÓDULO 1: GESTÃO DE ESTOQUE -->
             <div id="modulo-estoque" class="p-8">
 
-                <!-- Header de Impressão (PDF) -->
-                <div class="print-only flex-col w-full pb-4 mb-4 border-b-2 border-slate-900">
-                    <div class="flex justify-between items-end">
-                        <div>
-                            <span class="text-xl font-black text-slate-900 uppercase">Tech Solutions S.A.</span>
-                            <p class="text-xs text-slate-600">Sistema ERP Corporativo — Relatório de Posição Cadastral do Estoque</p>
-                        </div>
-                        <div class="text-right text-xs text-slate-700 space-y-0.5">
-                            <p><strong>Emissão:</strong> 31/10/2026 às 10:00h</p>
-                            <p><strong>Emitido Por:</strong> Instrutor Bruno</p>
-                            <p><strong>Módulo:</strong> Gestão de Estoque</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Métricas do Estoque -->
+                <!-- MÉTRICAS DO ESTOQUE (TELA DO SOFTWARE) -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6 no-print">
                     <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Itens Mapeados</span>
@@ -168,7 +167,7 @@
                     <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Quantidade Total em Estoque</span>
                         <p class="text-2xl font-black text-indigo-600 mt-1">451 Caixas / Pacotes</p>
-                        <span class="text-[11px] text-slate-500">Saldo Fisico em Almoxarifado</span>
+                        <span class="text-[11px] text-slate-500">Saldo Físico em Almoxarifado</span>
                     </div>
 
                     <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
@@ -178,8 +177,8 @@
                     </div>
                 </div>
 
-                <!-- Tabela de Estoque -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden erp-table-wrapper">
+                <!-- TABELA DO SOFTWARE ERP (VISÍVEL APENAS NA TELA) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden erp-table-wrapper no-print">
                     <table class="w-full text-left text-sm text-slate-600">
                         <thead class="bg-slate-900 text-white text-xs uppercase tracking-wider">
                             <tr>
@@ -188,69 +187,185 @@
                                 <th class="px-4 py-3 font-semibold text-right">Custo Unit. (R$)</th>
                                 <th class="px-4 py-3 font-semibold text-center">Qtd ERP</th>
                                 <th class="px-4 py-3 font-semibold text-right">Valor Total (R$)</th>
-                                <th class="px-4 py-3 font-semibold text-center col-acoes no-print">Status ERP</th>
+                                <th class="px-4 py-3 font-semibold text-center col-acoes">Status ERP</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-xs">
-                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-001</td><td class="px-4 py-2.5 font-medium text-slate-800">Caneta Esferográfica Azul (Cx 50)</td><td class="px-4 py-2.5 text-right font-mono">R$ 42,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">38</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 1.596,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
-                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-002</td><td class="px-4 py-2.5 font-medium text-slate-800">Caneta Esferográfica Preta (Cx 50)</td><td class="px-4 py-2.5 text-right font-mono">R$ 42,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">25</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 1.050,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
-                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-003</td><td class="px-4 py-2.5 font-medium text-slate-800">Caneta Esferográfica Vermelha (Cx 50)</td><td class="px-4 py-2.5 text-right font-mono">R$ 42,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">18</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 756,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
-                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-004</td><td class="px-4 py-2.5 font-medium text-slate-800">Lápis Preto HB nº 2 (Cx 72)</td><td class="px-4 py-2.5 text-right font-mono">R$ 38,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">15</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 570,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
-                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-005</td><td class="px-4 py-2.5 font-medium text-slate-800">Borracha Branca Escolar (Cx 40)</td><td class="px-4 py-2.5 text-right font-mono">R$ 28,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">22</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 616,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
-                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-006</td><td class="px-4 py-2.5 font-medium text-slate-800">Apontador c/ Depósito (Cx 24)</td><td class="px-4 py-2.5 text-right font-mono">R$ 36,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">10</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 360,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded text-[10px] font-bold">Atenção</span></td></tr>
-                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-007</td><td class="px-4 py-2.5 font-medium text-slate-800">Papel A4 Sulfite 75g (Cx 10 resmas)</td><td class="px-4 py-2.5 text-right font-mono">R$ 260,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">45</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 11.700,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
-                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-008</td><td class="px-4 py-2.5 font-medium text-slate-800">Papel A3 Sulfite 75g (Resma 500 fls)</td><td class="px-4 py-2.5 text-right font-mono">R$ 65,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">12</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 780,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
-                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-009</td><td class="px-4 py-2.5 font-medium text-slate-800">Bloco Notas Autoadesiva (Pct 12)</td><td class="px-4 py-2.5 text-right font-mono">R$ 48,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">35</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 1.680,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
-                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-010</td><td class="px-4 py-2.5 font-medium text-slate-800">Marcador de Texto Amarelo (Cx 12)</td><td class="px-4 py-2.5 text-right font-mono">R$ 32,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">25</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 800,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
-                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-011</td><td class="px-4 py-2.5 font-medium text-slate-800">Grampeador de Mesa MPT-26/6</td><td class="px-4 py-2.5 text-right font-mono">R$ 45,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">14</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 630,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
-                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-012</td><td class="px-4 py-2.5 font-medium text-slate-800">Caixa de Grampos 26/6 (Cx 5000)</td><td class="px-4 py-2.5 text-right font-mono">R$ 12,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">45</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 540,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
-                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-013</td><td class="px-4 py-2.5 font-medium text-slate-800">Perfurador de Papel 2 Furos</td><td class="px-4 py-2.5 text-right font-mono">R$ 55,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">8</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 440,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
-                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-014</td><td class="px-4 py-2.5 font-medium text-slate-800">Clip de Aço nº 2/0 (Cx 500g)</td><td class="px-4 py-2.5 text-right font-mono">R$ 18,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">30</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 540,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
-                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-015</td><td class="px-4 py-2.5 font-medium text-slate-800">Tesoura Escritório 17cm</td><td class="px-4 py-2.5 text-right font-mono">R$ 14,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">20</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 280,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
-                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-016</td><td class="px-4 py-2.5 font-medium text-slate-800">Fita Adesiva Transp. 12x50m (Pct 6)</td><td class="px-4 py-2.5 text-right font-mono">R$ 24,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">18</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 432,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
-                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-017</td><td class="px-4 py-2.5 font-medium text-slate-800">Cola em Bastão 21g (Cx 12)</td><td class="px-4 py-2.5 text-right font-mono">R$ 54,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">12</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 648,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
-                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-018</td><td class="px-4 py-2.5 font-medium text-slate-800">Pasta Suspensa Plast. (Pct 25)</td><td class="px-4 py-2.5 text-right font-mono">R$ 85,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">9</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 765,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded text-[10px] font-bold">Atenção</span></td></tr>
-                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-019</td><td class="px-4 py-2.5 font-medium text-slate-800">Pasta A-Z Registradora Larga</td><td class="px-4 py-2.5 text-right font-mono">R$ 22,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">25</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 550,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
-                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-020</td><td class="px-4 py-2.5 font-medium text-slate-800">Envelope Saco A4 Kraft (Pct 100)</td><td class="px-4 py-2.5 text-right font-mono">R$ 45,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">14</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 630,00</td><td class="px-4 py-2.5 text-center col-acoes no-print"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-001</td><td class="px-4 py-2.5 font-medium text-slate-800">Caneta Esferográfica Azul (Cx 50)</td><td class="px-4 py-2.5 text-right font-mono">R$ 42,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">38</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 1.596,00</td><td class="px-4 py-2.5 text-center col-acoes"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-002</td><td class="px-4 py-2.5 font-medium text-slate-800">Caneta Esferográfica Preta (Cx 50)</td><td class="px-4 py-2.5 text-right font-mono">R$ 42,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">25</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 1.050,00</td><td class="px-4 py-2.5 text-center col-acoes"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-003</td><td class="px-4 py-2.5 font-medium text-slate-800">Caneta Esferográfica Vermelha (Cx 50)</td><td class="px-4 py-2.5 text-right font-mono">R$ 42,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">18</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 756,00</td><td class="px-4 py-2.5 text-center col-acoes"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-004</td><td class="px-4 py-2.5 font-medium text-slate-800">Lápis Preto HB nº 2 (Cx 72)</td><td class="px-4 py-2.5 text-right font-mono">R$ 38,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">15</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 570,00</td><td class="px-4 py-2.5 text-center col-acoes"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-005</td><td class="px-4 py-2.5 font-medium text-slate-800">Borracha Branca Escolar (Cx 40)</td><td class="px-4 py-2.5 text-right font-mono">R$ 28,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">22</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 616,00</td><td class="px-4 py-2.5 text-center col-acoes"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-006</td><td class="px-4 py-2.5 font-medium text-slate-800">Apontador c/ Depósito (Cx 24)</td><td class="px-4 py-2.5 text-right font-mono">R$ 36,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">10</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 360,00</td><td class="px-4 py-2.5 text-center col-acoes"><span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded text-[10px] font-bold">Atenção</span></td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-007</td><td class="px-4 py-2.5 font-medium text-slate-800">Papel A4 Sulfite 75g (Cx 10 resmas)</td><td class="px-4 py-2.5 text-right font-mono">R$ 260,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">45</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 11.700,00</td><td class="px-4 py-2.5 text-center col-acoes"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-008</td><td class="px-4 py-2.5 font-medium text-slate-800">Papel A3 Sulfite 75g (Resma 500 fls)</td><td class="px-4 py-2.5 text-right font-mono">R$ 65,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">12</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 780,00</td><td class="px-4 py-2.5 text-center col-acoes"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-009</td><td class="px-4 py-2.5 font-medium text-slate-800">Bloco Notas Autoadesiva (Pct 12)</td><td class="px-4 py-2.5 text-right font-mono">R$ 48,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">35</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 1.680,00</td><td class="px-4 py-2.5 text-center col-acoes"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-010</td><td class="px-4 py-2.5 font-medium text-slate-800">Marcador de Texto Amarelo (Cx 12)</td><td class="px-4 py-2.5 text-right font-mono">R$ 32,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">25</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 800,00</td><td class="px-4 py-2.5 text-center col-acoes"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-011</td><td class="px-4 py-2.5 font-medium text-slate-800">Grampeador de Mesa MPT-26/6</td><td class="px-4 py-2.5 text-right font-mono">R$ 45,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">14</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 630,00</td><td class="px-4 py-2.5 text-center col-acoes"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-012</td><td class="px-4 py-2.5 font-medium text-slate-800">Caixa de Grampos 26/6 (Cx 5000)</td><td class="px-4 py-2.5 text-right font-mono">R$ 12,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">45</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 540,00</td><td class="px-4 py-2.5 text-center col-acoes"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-013</td><td class="px-4 py-2.5 font-medium text-slate-800">Perfurador de Papel 2 Furos</td><td class="px-4 py-2.5 text-right font-mono">R$ 55,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">8</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 440,00</td><td class="px-4 py-2.5 text-center col-acoes"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-014</td><td class="px-4 py-2.5 font-medium text-slate-800">Clip de Aço nº 2/0 (Cx 500g)</td><td class="px-4 py-2.5 text-right font-mono">R$ 18,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">30</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 540,00</td><td class="px-4 py-2.5 text-center col-acoes"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-015</td><td class="px-4 py-2.5 font-medium text-slate-800">Tesoura Escritório 17cm</td><td class="px-4 py-2.5 text-right font-mono">R$ 14,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">20</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 280,00</td><td class="px-4 py-2.5 text-center col-acoes"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-016</td><td class="px-4 py-2.5 font-medium text-slate-800">Fita Adesiva Transp. 12x50m (Pct 6)</td><td class="px-4 py-2.5 text-right font-mono">R$ 24,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">18</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 432,00</td><td class="px-4 py-2.5 text-center col-acoes"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-017</td><td class="px-4 py-2.5 font-medium text-slate-800">Cola em Bastão 21g (Cx 12)</td><td class="px-4 py-2.5 text-right font-mono">R$ 54,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">12</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 648,00</td><td class="px-4 py-2.5 text-center col-acoes"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-018</td><td class="px-4 py-2.5 font-medium text-slate-800">Pasta Suspensa Plast. (Pct 25)</td><td class="px-4 py-2.5 text-right font-mono">R$ 85,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">9</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 765,00</td><td class="px-4 py-2.5 text-center col-acoes"><span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded text-[10px] font-bold">Atenção</span></td></tr>
+                            <tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-019</td><td class="px-4 py-2.5 font-medium text-slate-800">Pasta A-Z Registradora Larga</td><td class="px-4 py-2.5 text-right font-mono">R$ 22,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">25</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 550,00</td><td class="px-4 py-2.5 text-center col-acoes"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
+                            <tr class="bg-slate-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">PAP-020</td><td class="px-4 py-2.5 font-medium text-slate-800">Envelope Saco A4 Kraft (Pct 100)</td><td class="px-4 py-2.5 text-right font-mono">R$ 45,00</td><td class="px-4 py-2.5 text-center font-bold text-slate-900">14</td><td class="px-4 py-2.5 text-right font-mono font-bold">R$ 630,00</td><td class="px-4 py-2.5 text-center col-acoes"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">Regular</span></td></tr>
                         </tbody>
                         <tfoot class="bg-slate-100 font-bold text-slate-900 text-xs">
                             <tr>
                                 <td colspan="3" class="px-4 py-3 text-right">TOTAL GERAL EM ESTOQUE:</td>
                                 <td class="px-4 py-3 text-center">451</td>
                                 <td class="px-4 py-3 text-right text-blue-700 font-mono text-sm">R$ 25.363,00</td>
-                                <td class="col-acoes no-print"></td>
+                                <td class="col-acoes"></td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
 
-                <!-- Rodapé PDF -->
-                <div class="print-only w-full justify-between items-center mt-6 pt-3 border-t border-slate-300 text-[9pt] text-slate-600">
-                    <p><strong>Status de Validação:</strong> Aguardando Entrada de Inventário Físico</p>
-                    <p class="italic">relatorio ficticio de aprendizagem utilizado no cuso de Auxiliar Administrativo - 2026 - Bruno Ferreira</p>
-                </div>
-
-            </div>
-
-            <!-- MÓDULO 2: HISTÓRICO DE VENDAS & DEMANDA -->
-            <div id="modulo-vendas" class="p-8 hidden">
-
-                <!-- Header de Impressão (PDF Vendas) -->
-                <div class="print-only flex-col w-full pb-4 mb-4 border-b-2 border-slate-900">
-                    <div class="flex justify-between items-end">
+                <!-- 🖨️ SEÇÃO IMPRESSA 1: RELATÓRIO OFICIAL COM VALORES (PDF) -->
+                <div class="print-only print-relatorio-section">
+                    <div class="flex justify-between items-end pb-3 mb-3 border-b-2 border-slate-900">
                         <div>
                             <span class="text-xl font-black text-slate-900 uppercase">Tech Solutions S.A.</span>
-                            <p class="text-xs text-slate-600">Sistema ERP Corporativo — Relatório de Histórico de Consumo & Demanda</p>
+                            <p class="text-xs text-slate-600">Sistema ERP Corporativo — Relatório de Posição Cadastral do Estoque</p>
                         </div>
                         <div class="text-right text-xs text-slate-700 space-y-0.5">
                             <p><strong>Emissão:</strong> 31/10/2026 às 10:00h</p>
                             <p><strong>Emitido Por:</strong> Instrutor Bruno</p>
-                            <p><strong>Módulo:</strong> Histórico de Vendas</p>
+                            <p><strong>Módulo:</strong> Gestão de Estoque</p>
                         </div>
+                    </div>
+
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Descrição do Material</th>
+                                <th style="text-align: right;">Custo Unit. (R$)</th>
+                                <th style="text-align: center;">Qtd ERP</th>
+                                <th style="text-align: right;">Valor Total (R$)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>PAP-001</td><td>Caneta Esferográfica Azul (Cx 50)</td><td style="text-align: right;">R$ 42,00</td><td style="text-align: center;">38</td><td style="text-align: right;">R$ 1.596,00</td></tr>
+                            <tr><td>PAP-002</td><td>Caneta Esferográfica Preta (Cx 50)</td><td style="text-align: right;">R$ 42,00</td><td style="text-align: center;">25</td><td style="text-align: right;">R$ 1.050,00</td></tr>
+                            <tr><td>PAP-003</td><td>Caneta Esferográfica Vermelha (Cx 50)</td><td style="text-align: right;">R$ 42,00</td><td style="text-align: center;">18</td><td style="text-align: right;">R$ 756,00</td></tr>
+                            <tr><td>PAP-004</td><td>Lápis Preto HB nº 2 (Cx 72)</td><td style="text-align: right;">R$ 38,00</td><td style="text-align: center;">15</td><td style="text-align: right;">R$ 570,00</td></tr>
+                            <tr><td>PAP-005</td><td>Borracha Branca Escolar (Cx 40)</td><td style="text-align: right;">R$ 28,00</td><td style="text-align: center;">22</td><td style="text-align: right;">R$ 616,00</td></tr>
+                            <tr><td>PAP-006</td><td>Apontador c/ Depósito (Cx 24)</td><td style="text-align: right;">R$ 36,00</td><td style="text-align: center;">10</td><td style="text-align: right;">R$ 360,00</td></tr>
+                            <tr><td>PAP-007</td><td>Papel A4 Sulfite 75g (Cx 10 resmas)</td><td style="text-align: right;">R$ 260,00</td><td style="text-align: center;">45</td><td style="text-align: right;">R$ 11.700,00</td></tr>
+                            <tr><td>PAP-008</td><td>Papel A3 Sulfite 75g (Resma 500 fls)</td><td style="text-align: right;">R$ 65,00</td><td style="text-align: center;">12</td><td style="text-align: right;">R$ 780,00</td></tr>
+                            <tr><td>PAP-009</td><td>Bloco Notas Autoadesiva (Pct 12)</td><td style="text-align: right;">R$ 48,00</td><td style="text-align: center;">35</td><td style="text-align: right;">R$ 1.680,00</td></tr>
+                            <tr><td>PAP-010</td><td>Marcador de Texto Amarelo (Cx 12)</td><td style="text-align: right;">R$ 32,00</td><td style="text-align: center;">25</td><td style="text-align: right;">R$ 800,00</td></tr>
+                            <tr><td>PAP-011</td><td>Grampeador de Mesa MPT-26/6</td><td style="text-align: right;">R$ 45,00</td><td style="text-align: center;">14</td><td style="text-align: right;">R$ 630,00</td></tr>
+                            <tr><td>PAP-012</td><td>Caixa de Grampos 26/6 (Cx 5000)</td><td style="text-align: right;">R$ 12,00</td><td style="text-align: center;">45</td><td style="text-align: right;">R$ 540,00</td></tr>
+                            <tr><td>PAP-013</td><td>Perfurador de Papel 2 Furos</td><td style="text-align: right;">R$ 55,00</td><td style="text-align: center;">8</td><td style="text-align: right;">R$ 440,00</td></tr>
+                            <tr><td>PAP-014</td><td>Clip de Aço nº 2/0 (Cx 500g)</td><td style="text-align: right;">R$ 18,00</td><td style="text-align: center;">30</td><td style="text-align: right;">R$ 540,00</td></tr>
+                            <tr><td>PAP-015</td><td>Tesoura Escritório 17cm</td><td style="text-align: right;">R$ 14,00</td><td style="text-align: center;">20</td><td style="text-align: right;">R$ 280,00</td></tr>
+                            <tr><td>PAP-016</td><td>Fita Adesiva Transp. 12x50m (Pct 6)</td><td style="text-align: right;">R$ 24,00</td><td style="text-align: center;">18</td><td style="text-align: right;">R$ 432,00</td></tr>
+                            <tr><td>PAP-017</td><td>Cola em Bastão 21g (Cx 12)</td><td style="text-align: right;">R$ 54,00</td><td style="text-align: center;">12</td><td style="text-align: right;">R$ 648,00</td></tr>
+                            <tr><td>PAP-018</td><td>Pasta Suspensa Plast. (Pct 25)</td><td style="text-align: right;">R$ 85,00</td><td style="text-align: center;">9</td><td style="text-align: right;">R$ 765,00</td></tr>
+                            <tr><td>PAP-019</td><td>Pasta A-Z Registradora Larga</td><td style="text-align: right;">R$ 22,00</td><td style="text-align: center;">25</td><td style="text-align: right;">R$ 550,00</td></tr>
+                            <tr><td>PAP-020</td><td>Envelope Saco A4 Kraft (Pct 100)</td><td style="text-align: right;">R$ 45,00</td><td style="text-align: center;">14</td><td style="text-align: right;">R$ 630,00</td></tr>
+                        </tbody>
+                        <tfoot>
+                            <tr style="font-weight: bold; background-color: #f1f5f9;">
+                                <td colspan="3" style="text-align: right;">TOTAL GERAL EM ESTOQUE:</td>
+                                <td style="text-align: center;">451</td>
+                                <td style="text-align: right;">R$ 25.363,00</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div style="margin-top: 25px; padding-top: 8px; border-top: 1px solid #cbd5e1; font-size: 8pt; display: flex; justify-content: space-between; color: #475569;">
+                        <p><strong>Status de Validação:</strong> Aguardando Entrada de Inventário Físico</p>
+                        <p class="italic">relatorio ficticio de aprendizagem utilizado no cuso de Auxiliar Administrativo - 2026 - Bruno Ferreira</p>
                     </div>
                 </div>
 
-                <!-- Métricas do Histórico de Vendas -->
+                <!-- 🖨️ SEÇÃO IMPRESSA 2: FICHA DE CONFERÊNCIA (AUDITORIA CEGA SEM VALORES) -->
+                <div class="print-only print-ficha-section">
+                    <div class="flex justify-between items-end pb-3 mb-3 border-b-2 border-slate-900">
+                        <div>
+                            <span class="text-xl font-black text-slate-900 uppercase">Tech Solutions S.A.</span>
+                            <p class="text-xs text-slate-600">Sistema ERP Corporativo — Ficha de Conferência Físico-Cadastral (Inventário)</p>
+                        </div>
+                        <div class="text-right text-xs text-slate-700 space-y-0.5">
+                            <p><strong>Emissão:</strong> 31/10/2026 às 10:00h</p>
+                            <p><strong>Emitido Por:</strong> Instrutor Bruno</p>
+                            <p><strong>Finalidade:</strong> Auditoria de Campo</p>
+                        </div>
+                    </div>
+
+                    <!-- Aviso de Instruções -->
+                    <div style="background-color: #f8fafc; border: 1px solid #cbd5e1; padding: 6px 10px; margin-bottom: 10px; font-size: 7.5pt; border-radius: 4px;">
+                        <strong>⚠️ INSTRUÇÕES AO CONFERENTE:</strong> Realize a contagem física diretamente no almoxarifado e anote manualmente os saldos contados na coluna <strong>"QTD CONTADA"</strong>. Após finalizar, preencha os dados corporativos no rodapé e assine o documento.
+                    </div>
+
+                    <!-- Tabela de Auditoria (Sem Valores) -->
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th style="width: 12%;">Código</th>
+                                <th style="width: 43%;">Descrição do Material</th>
+                                <th style="width: 12%; text-align: center;">Qtd ERP</th>
+                                <th style="width: 15%; text-align: center;">Qtd Contada</th>
+                                <th style="width: 18%;">Observações / Avarias</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>PAP-001</td><td>Caneta Esferográfica Azul (Cx 50)</td><td style="text-align: center;">38</td><td></td><td></td></tr>
+                            <tr><td>PAP-002</td><td>Caneta Esferográfica Preta (Cx 50)</td><td style="text-align: center;">25</td><td></td><td></td></tr>
+                            <tr><td>PAP-003</td><td>Caneta Esferográfica Vermelha (Cx 50)</td><td style="text-align: center;">18</td><td></td><td></td></tr>
+                            <tr><td>PAP-004</td><td>Lápis Preto HB nº 2 (Cx 72)</td><td style="text-align: center;">15</td><td></td><td></td></tr>
+                            <tr><td>PAP-005</td><td>Borracha Branca Escolar (Cx 40)</td><td style="text-align: center;">22</td><td></td><td></td></tr>
+                            <tr><td>PAP-006</td><td>Apontador c/ Depósito (Cx 24)</td><td style="text-align: center;">10</td><td></td><td></td></tr>
+                            <tr><td>PAP-007</td><td>Papel A4 Sulfite 75g (Cx 10 resmas)</td><td style="text-align: center;">45</td><td></td><td></td></tr>
+                            <tr><td>PAP-008</td><td>Papel A3 Sulfite 75g (Resma 500 fls)</td><td style="text-align: center;">12</td><td></td><td></td></tr>
+                            <tr><td>PAP-009</td><td>Bloco Notas Autoadesiva (Pct 12)</td><td style="text-align: center;">35</td><td></td><td></td></tr>
+                            <tr><td>PAP-010</td><td>Marcador de Texto Amarelo (Cx 12)</td><td style="text-align: center;">25</td><td></td><td></td></tr>
+                            <tr><td>PAP-011</td><td>Grampeador de Mesa MPT-26/6</td><td style="text-align: center;">14</td><td></td><td></td></tr>
+                            <tr><td>PAP-012</td><td>Caixa de Grampos 26/6 (Cx 5000)</td><td style="text-align: center;">45</td><td></td><td></td></tr>
+                            <tr><td>PAP-013</td><td>Perfurador de Papel 2 Furos</td><td style="text-align: center;">8</td><td></td><td></td></tr>
+                            <tr><td>PAP-014</td><td>Clip de Aço nº 2/0 (Cx 500g)</td><td style="text-align: center;">30</td><td></td><td></td></tr>
+                            <tr><td>PAP-015</td><td>Tesoura Escritório 17cm</td><td style="text-align: center;">20</td><td></td><td></td></tr>
+                            <tr><td>PAP-016</td><td>Fita Adesiva Transp. 12x50m (Pct 6)</td><td style="text-align: center;">18</td><td></td><td></td></tr>
+                            <tr><td>PAP-017</td><td>Cola em Bastão 21g (Cx 12)</td><td style="text-align: center;">12</td><td></td><td></td></tr>
+                            <tr><td>PAP-018</td><td>Pasta Suspensa Plast. (Pct 25)</td><td style="text-align: center;">9</td><td></td><td></td></tr>
+                            <tr><td>PAP-019</td><td>Pasta A-Z Registradora Larga</td><td style="text-align: center;">25</td><td></td><td></td></tr>
+                            <tr><td>PAP-020</td><td>Envelope Saco A4 Kraft (Pct 100)</td><td style="text-align: center;">14</td><td></td><td></td></tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Quadrado de Lançamento e Assinatura do Conferente -->
+                    <div style="margin-top: 20px; border: 1px solid #0f172a; padding: 12px; border-radius: 4px; background-color: #ffffff;">
+                        <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 8.5pt; text-transform: uppercase;">Identificação e Termo de Responsabilidade da Contagem:</p>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 8pt;">
+                            <div>
+                                <p style="margin: 0 0 12px 0;"><strong>Nome do Conferente:</strong> ____________________________________________________</p>
+                                <p style="margin: 0;"><strong>E-mail Corporativo:</strong> ____________________________________________________</p>
+                            </div>
+                            <div>
+                                <p style="margin: 0 0 12px 0;"><strong>Data da Conferência:</strong> ____ / ____ / 2026 &nbsp;&nbsp;&nbsp; <strong>Horário:</strong> ____ : ____</p>
+                                <p style="margin: 0;"><strong>Assinatura do Responsável:</strong> __________________________________________</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rodapé Pedagógico Obrigatório -->
+                    <div style="margin-top: 15px; padding-top: 6px; border-top: 1px solid #cbd5e1; font-size: 7.5pt; display: flex; justify-content: space-between; color: #475569;">
+                        <p><strong>Controle Interno:</strong> Formu-Auditoria-v2.0</p>
+                        <p class="italic">relatorio ficticio de aprendizagem utilizado no cuso de Auxiliar Administrativo - 2026 - Bruno Ferreira</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- TELA DO MÓDULO 2: HISTÓRICO DE VENDAS -->
+            <div id="modulo-vendas" class="p-8 hidden">
+                <!-- Conteúdo mantido idêntico ao módulo anterior -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6 no-print">
                     <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Vendas Mês Anterior</span>
@@ -271,7 +386,6 @@
                     </div>
                 </div>
 
-                <!-- Tabela de Histórico de Vendas -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden erp-table-wrapper">
                     <table class="w-full text-left text-sm text-slate-600">
                         <thead class="bg-slate-900 text-white text-xs uppercase tracking-wider">
@@ -308,20 +422,13 @@
                         </tbody>
                     </table>
                 </div>
-
-                <!-- Rodapé PDF Vendas -->
-                <div class="print-only w-full justify-between items-center mt-6 pt-3 border-t border-slate-300 text-[9pt] text-slate-600">
-                    <p><strong>Status da Análise:</strong> Média Movel Calculada com Sucesso</p>
-                    <p class="italic">relatorio ficticio de aprendizagem utilizado no cuso de Auxiliar Administrativo - 2026 - Bruno Ferreira</p>
-                </div>
-
             </div>
 
         </div>
 
     </div>
 
-    <!-- SCRIPT DE TRATAMENTO DE NAVEGAÇÃO -->
+    <!-- SCRIPT DE TRATAMENTO DE NAVEGAÇÃO E IMPRESSÃO -->
     <script>
         function navegarModulo(modulo) {
             const modEstoque = document.getElementById('modulo-estoque');
@@ -342,6 +449,18 @@
                 navVendas.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-blue-600 text-white font-semibold shadow transition";
                 navEstoque.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition";
             }
+        }
+
+        function imprimirRelatorioOficial() {
+            document.body.classList.remove('print-mode-ficha');
+            document.body.classList.add('print-mode-relatorio');
+            window.print();
+        }
+
+        function imprimirFichaConferencia() {
+            document.body.classList.remove('print-mode-relatorio');
+            document.body.classList.add('print-mode-ficha');
+            window.print();
         }
     </script>
 </body>
